@@ -25,7 +25,7 @@ void AGGameMode::PostLogin(APlayerController* NewPlayer)
 		PlayerState->InitPlayerState();
 	}
 
-	UKismetSystemLibrary::PrintString(this, TEXT("AGGameMode::PostLogin is called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("AGGameMode::PostLogin is called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
 	
 }
 

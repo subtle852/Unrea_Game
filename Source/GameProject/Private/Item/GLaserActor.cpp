@@ -164,7 +164,7 @@ void AGLaserActor::ApplyScale_NetMulticast_Implementation(FVector InScale)
 
 void AGLaserActor::StartShrinking_NetMulticast_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("StartShrinking is called")));
+	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("StartShrinking is called")));
 	bIsShrinking = true;
 
 	//OnLaserShrinkStart.Broadcast();

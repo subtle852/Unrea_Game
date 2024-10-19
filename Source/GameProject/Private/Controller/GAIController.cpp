@@ -84,7 +84,7 @@ void AGAIController::BeginAI(APawn* InPawn)
 
 		//if (ShowAIDebug == 1)
 		{
-			UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("BeginAI() has been called")));
+			//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("BeginAI() has been called")));
 		}
 	}
 }
@@ -98,7 +98,7 @@ void AGAIController::EndAI()
 
 		//if (ShowAIDebug == 1)
 		{
-			UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("EndAI() has been called")));
+			//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("EndAI() has been called")));
 		}
 	}
 }

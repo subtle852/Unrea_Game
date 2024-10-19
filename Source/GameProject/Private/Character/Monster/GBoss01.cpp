@@ -307,13 +307,13 @@ void AGBoss01::DrawDetectLine_NetMulticast_Implementation(const bool bResult, FV
 
 	if(bResult == false)
 	{
-		DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
+		//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
 	}
 	else
 	{
-		DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
-		DrawDebugPoint(GetWorld(), PCLocation, 10.f, FColor::Red, false, 0.5f);
-		DrawDebugLine(GetWorld(), MonsterLocation, PCLocation, FColor::Red, false, 0.5f, 0u, 3.f);
+		//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
+		//DrawDebugPoint(GetWorld(), PCLocation, 10.f, FColor::Red, false, 0.5f);
+		//DrawDebugLine(GetWorld(), MonsterLocation, PCLocation, FColor::Red, false, 0.5f, 0u, 3.f);
 	}
 }
 
@@ -324,7 +324,7 @@ void AGBoss01::OnCheckHit()
 	if(HasAuthority() == false)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("OnCheckHit is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnCheckHit is called"));
 	
 	TArray<FHitResult> HitResults;
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -354,7 +354,7 @@ void AGBoss01::OnCheckHit()
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
-						UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
+						//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
 				
 						FDamageEvent DamageEvent;
 						FAttackDamageEvent* AttackDamageEvent = static_cast<FAttackDamageEvent*>(&DamageEvent);
@@ -392,8 +392,8 @@ void AGBoss01::OnCheckHit()
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
-						UKismetSystemLibrary::PrintString(
-							this, FString::Printf(TEXT("Hit Actor Name: %s"), *CharacterMeshHitResult.GetActor()->GetName()));
+						//UKismetSystemLibrary::PrintString(
+							//this, FString::Printf(TEXT("Hit Actor Name: %s"), *CharacterMeshHitResult.GetActor()->GetName()));
 				
 						SpawnBloodEffect_NetMulticast(CharacterMeshHitResult);
 					}
@@ -410,7 +410,7 @@ void AGBoss01::OnCheckHitDown()
 	if(HasAuthority() == false)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("OnCheckHitDown is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnCheckHitDown is called"));
 	
 	TArray<FHitResult> HitResults;
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -440,7 +440,7 @@ void AGBoss01::OnCheckHitDown()
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
-						UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
+						//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
 				
 						FDamageEvent DamageEvent;
 						FAttackDamageEvent* AttackDamageEvent = static_cast<FAttackDamageEvent*>(&DamageEvent);
@@ -478,8 +478,8 @@ void AGBoss01::OnCheckHitDown()
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
-						UKismetSystemLibrary::PrintString(
-							this, FString::Printf(TEXT("Hit Actor Name: %s"), *CharacterMeshHitResult.GetActor()->GetName()));
+						//UKismetSystemLibrary::PrintString(
+							//this, FString::Printf(TEXT("Hit Actor Name: %s"), *CharacterMeshHitResult.GetActor()->GetName()));
 				
 						SpawnBloodEffect_NetMulticast(CharacterMeshHitResult);
 					}
@@ -493,7 +493,7 @@ void AGBoss01::BeginAttack()
 {
 	Super::BeginAttack();
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginAttack is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginAttack is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -508,7 +508,7 @@ void AGBoss01::BeginAttack()
 
 	PreviousAttackRandNum = AttackRandNum;
 
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("AttackRandNum is %u"), AttackRandNum));
+	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("AttackRandNum is %u"), AttackRandNum));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	bIsNowAttacking = true;
@@ -520,7 +520,7 @@ void AGBoss01::BeginAttack()
 
 void AGBoss01::PlayBasicAttackAnimMontage_NetMulticast_Implementation(uint16 InRandNum)
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayBasicAttackAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayBasicAttackAnimMontage is called by NetMulticast"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -574,16 +574,16 @@ void AGBoss01::DrawLine_NetMulticast_Implementation(const bool bResult, ECheckHi
 		FColor DrawColor = bResult ? FColor::Green : FColor::Red;
 		float DebugLifeTime = 5.f;
 
-		DrawDebugCapsule(
-			GetWorld(),
-			Center,
-			HalfHeight,
-			BasicAttackRadius,
-			CapsuleRot,
-			DrawColor,
-			false,
-			DebugLifeTime
-		);
+		// DrawDebugCapsule(
+		// 	GetWorld(),
+		// 	Center,
+		// 	HalfHeight,
+		// 	BasicAttackRadius,
+		// 	CapsuleRot,
+		// 	DrawColor,
+		// 	false,
+		// 	DebugLifeTime
+		// );
 	}
 	else if (InCheckHitDirection == ECheckHitDirection::Down)
 	{
@@ -595,20 +595,20 @@ void AGBoss01::DrawLine_NetMulticast_Implementation(const bool bResult, ECheckHi
 		FColor DrawColor = bResult ? FColor::Green : FColor::Red;
 		float DebugLifeTime = 5.f;
 		
-		DrawDebugCapsule(
-			GetWorld(),
-			CapsuleCenter,
-			CapsuleHalfHeight,
-			DownAttackRadius,
-			CapsuleRot,
-			DrawColor,
-			false,
-			DebugLifeTime
-		);
+		// DrawDebugCapsule(
+		// 	GetWorld(),
+		// 	CapsuleCenter,
+		// 	CapsuleHalfHeight,
+		// 	DownAttackRadius,
+		// 	CapsuleRot,
+		// 	DrawColor,
+		// 	false,
+		// 	DebugLifeTime
+		// );
 	}
 	else
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("This CheckHit Direction is NOT implemented"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("This CheckHit Direction is NOT implemented"));
 	}
 }
 
@@ -616,7 +616,7 @@ void AGBoss01::EndAttack(UAnimMontage* InMontage, bool bInterruped)
 {
 	Super::EndAttack(InMontage, bInterruped);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("EndAttack is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndAttack is called"));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bIsNowAttacking = false;
@@ -633,7 +633,7 @@ void AGBoss01::BeginJumpAttack()
 {
 	Super::BeginJumpAttack();
 
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginJumpAttack is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginJumpAttack is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -648,7 +648,7 @@ void AGBoss01::BeginJumpAttack()
 
 void AGBoss01::PlayJumpAttackAnimMontage_NetMulticast_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayJumpAttackAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayJumpAttackAnimMontage is called by NetMulticast"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -668,7 +668,7 @@ void AGBoss01::PlayLastSectionJumpAttackAnimMontage_NetMulticast_Implementation(
 	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayLastSectionJumpAttackAnimMontage_NetMulticast is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayLastSectionJumpAttackAnimMontage_NetMulticast is called"));
 	
 	if (AnimInstance->Montage_IsPlaying(JumpAttackMontage))// 마지막 섹션으로 전환
 	{
@@ -688,7 +688,7 @@ void AGBoss01::EndJumpAttack(UAnimMontage* InMontage, bool bInterruped)
 {
 	Super::EndJumpAttack(InMontage, bInterruped);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("EndJumpAttack is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndJumpAttack is called"));
 	
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	
@@ -709,27 +709,27 @@ void AGBoss01::OnShootProjectile()
 	if(HasAuthority() == false)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("OnShootProjectile is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnShootProjectile is called"));
 
 	// 발사 방향 추출
 	AGAIController* AIController = Cast<AGAIController>(GetController());
 	if(AIController == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
 		return;
 	}
 	//AGCharacter* TargetActor = Cast<AGCharacter>(AIController->TargetActor);
 	AGCharacter* TargetActor = Cast<AGCharacter>(AIController->GetBlackboardComponent()->GetValueAsObject(AGAIController::TargetActorKey));
 	if(TargetActor == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
 		return;
 	}
 	
 	if(IsValid(AIController) == true && IsValid(TargetActor) == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(
-											TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(
+											//TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
 		
 		//UKismetSystemLibrary::PrintString(this, TEXT("AIController & AIController is Vaild"));
 		//FVector MuzzleLocation = WeaponInstance->GetArrowSpawnArrowComponent()->GetComponentLocation();
@@ -738,7 +738,7 @@ void AGBoss01::OnShootProjectile()
 		if (GetMesh()->DoesSocketExist(WeaponSocket) == true)
 		{
 			MuzzleLocation = GetMesh()->GetSocketLocation(WeaponSocket);
-			UKismetSystemLibrary::PrintString(this, TEXT("MuzzleLocation is Vaild"));
+			//UKismetSystemLibrary::PrintString(this, TEXT("MuzzleLocation is Vaild"));
 		}
 		FVector HitLocation = TargetActor->GetActorLocation();
 		
@@ -762,7 +762,7 @@ void AGBoss01::OnShootProjectile()
 			if (IsValid(SpawnedArrow) == true)
 			{
 				
-				UKismetSystemLibrary::PrintString(this, TEXT("OnShoot is called"));
+				//UKismetSystemLibrary::PrintString(this, TEXT("OnShoot is called"));
 			}
 		}
 	}
@@ -775,27 +775,27 @@ void AGBoss01::OnShootWindProjectile()
 	if(HasAuthority() == false)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("OnShootWindProjectile is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnShootWindProjectile is called"));
 
 	// 발사 방향 추출
 	AGAIController* AIController = Cast<AGAIController>(GetController());
 	if(AIController == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
 		return;
 	}
 	//AGCharacter* TargetActor = Cast<AGCharacter>(AIController->TargetActor);
 	AGCharacter* TargetActor = Cast<AGCharacter>(AIController->GetBlackboardComponent()->GetValueAsObject(AGAIController::TargetActorKey));
 	if(TargetActor == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
 		return;
 	}
 	
 	if(IsValid(AIController) == true && IsValid(TargetActor) == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(
-											TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(
+											//TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
 		
 		//UKismetSystemLibrary::PrintString(this, TEXT("AIController & AIController is Vaild"));
 		//FVector MuzzleLocation = WeaponInstance->GetArrowSpawnArrowComponent()->GetComponentLocation();
@@ -804,7 +804,7 @@ void AGBoss01::OnShootWindProjectile()
 		if (GetMesh()->DoesSocketExist(WeaponSocket) == true)
 		{
 			MuzzleLocation = GetMesh()->GetSocketLocation(WeaponSocket);
-			UKismetSystemLibrary::PrintString(this, TEXT("MuzzleLocation is Vaild"));
+			//UKismetSystemLibrary::PrintString(this, TEXT("MuzzleLocation is Vaild"));
 		}
 		FVector HitLocation = TargetActor->GetActorLocation();
 		
@@ -828,7 +828,7 @@ void AGBoss01::OnShootWindProjectile()
 			if (IsValid(SpawnedArrow) == true)
 			{
 				
-				UKismetSystemLibrary::PrintString(this, TEXT("OnShootWind is called"));
+				//UKismetSystemLibrary::PrintString(this, TEXT("OnShootWind is called"));
 			}
 		}
 	}
@@ -841,27 +841,27 @@ void AGBoss01::OnShootMultipleProjectile()
 	if(HasAuthority() == false)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("OnShootMultipleProjectile is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnShootMultipleProjectile is called"));
 
 	// 발사 방향 추출
 	AGAIController* AIController = Cast<AGAIController>(GetController());
 	if(AIController == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
 		return;
 	}
 	//AGCharacter* TargetActor = Cast<AGCharacter>(AIController->TargetActor);
 	AGCharacter* TargetActor = Cast<AGCharacter>(AIController->GetBlackboardComponent()->GetValueAsObject(AGAIController::TargetActorKey));
 	if(TargetActor == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
 		return;
 	}
 	
 	if(IsValid(AIController) == true && IsValid(TargetActor) == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(
-											TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(
+											//TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
 		
 		//UKismetSystemLibrary::PrintString(this, TEXT("AIController & AIController is Vaild"));
 		//FVector MuzzleLocation = WeaponInstance->GetArrowSpawnArrowComponent()->GetComponentLocation();
@@ -910,7 +910,7 @@ void AGBoss01::OnShootMultipleProjectile()
 				{
 					//SpawnedHomingArrow->InitializeHoming(TargetActor);
 					SpawnedHomingArrow->EnableHoming(TargetActor, 0.1f);
-					UKismetSystemLibrary::PrintString(this, TEXT("OnShootMultipleProjectile HOMING is called"));
+					//UKismetSystemLibrary::PrintString(this, TEXT("OnShootMultipleProjectile HOMING is called"));
 				}
 			}
 		}
@@ -925,27 +925,27 @@ void AGBoss01::OnShootAOE()
 	if(HasAuthority() == false)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("OnShootAOE is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnShootAOE is called"));
 
 	// 발사 방향 추출
 	AGAIController* AIController = Cast<AGAIController>(GetController());
 	if(AIController == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
 		return;
 	}
 	//AGCharacter* TargetActor = Cast<AGCharacter>(AIController->TargetActor);
 	AGCharacter* TargetActor = Cast<AGCharacter>(AIController->GetBlackboardComponent()->GetValueAsObject(AGAIController::TargetActorKey));
 	if(TargetActor == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
 		return;
 	}
 	
 	if(IsValid(AIController) == true && IsValid(TargetActor) == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(
-											TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(
+											//TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
 		
 
 		FVector TargetLocation = TargetActor->GetActorLocation();
@@ -966,7 +966,7 @@ void AGBoss01::OnShootAOE()
 
 		if (bHit)
 		{
-			UKismetSystemLibrary::PrintString(this, TEXT("Successfully Find Floor"));
+			//UKismetSystemLibrary::PrintString(this, TEXT("Successfully Find Floor"));
 			
 			FVector SpawnLocation = HitResult.Location;
 			SpawnLocation.Z += 5.f;
@@ -983,13 +983,13 @@ void AGBoss01::OnShootAOE()
 				if (IsValid(SpawnedAOE) == true)
 				{
 				
-					UKismetSystemLibrary::PrintString(this, TEXT("OnShootAOE is called"));
+				//	UKismetSystemLibrary::PrintString(this, TEXT("OnShootAOE is called"));
 				}
 			}
 		}
 		else
 		{
-			UKismetSystemLibrary::PrintString(this, TEXT("Can't find Floor"));
+			//UKismetSystemLibrary::PrintString(this, TEXT("Can't find Floor"));
 		}
 	}
 }
@@ -1006,27 +1006,27 @@ void AGBoss01::OnShootLaser()
 	if(HasAuthority() == false)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("OnShootLaser is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnShootLaser is called"));
 
 	// 발사 방향 추출
 	AGAIController* AIController = Cast<AGAIController>(GetController());
 	if(AIController == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
 		return;
 	}
 	//AGCharacter* TargetActor = Cast<AGCharacter>(AIController->TargetActor);
 	AGCharacter* TargetActor = Cast<AGCharacter>(AIController->GetBlackboardComponent()->GetValueAsObject(AGAIController::TargetActorKey));
 	if(TargetActor == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
 		return;
 	}
 	
 	if(IsValid(AIController) == true && IsValid(TargetActor) == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(
-											TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(
+											//TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
 		
 		//UKismetSystemLibrary::PrintString(this, TEXT("AIController & AIController is Vaild"));
 		FVector MuzzleLocation = LaserLaunchComponent->GetComponentLocation();
@@ -1047,7 +1047,7 @@ void AGBoss01::OnShootLaser()
 			AGLaserActor* SpawnedLaser = GetWorld()->SpawnActor<AGLaserActor>(LaserClass, MuzzleLocation, LaunchRotation, SpawnParams);
 			if (IsValid(SpawnedLaser) == true)
 			{
-				UKismetSystemLibrary::PrintString(this, TEXT("OnShootLaser is called"));
+				//UKismetSystemLibrary::PrintString(this, TEXT("OnShootLaser is called"));
 
 				// 레이저 액터의 OnLaserShrinkEnd Delegate에 바인딩
 				SpawnedLaser->OnLaserShrinkEnd.AddDynamic(this, &AGBoss01::OnLaserShrinkEnd);
@@ -1063,27 +1063,27 @@ void AGBoss01::OnShootTorus()
 	if(HasAuthority() == false)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("OnShootTorus is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnShootTorus is called"));
 
 	// 발사 방향 추출
 	AGAIController* AIController = Cast<AGAIController>(GetController());
 	if(AIController == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
 		return;
 	}
 	//AGCharacter* TargetActor = Cast<AGCharacter>(AIController->TargetActor);
 	AGCharacter* TargetActor = Cast<AGCharacter>(AIController->GetBlackboardComponent()->GetValueAsObject(AGAIController::TargetActorKey));
 	if(TargetActor == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
 		return;
 	}
 	
 	if(IsValid(AIController) == true && IsValid(TargetActor) == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(
-											TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(
+											//TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
 		
 		//UKismetSystemLibrary::PrintString(this, TEXT("AIController & AIController is Vaild"));
 		FVector MuzzleLocation = TorusLaunchComponent->GetComponentLocation();
@@ -1104,7 +1104,7 @@ void AGBoss01::OnShootTorus()
 			AGTorusActor* SpawnedTorus = GetWorld()->SpawnActor<AGTorusActor>(TorusClass, MuzzleLocation, LaunchRotation, SpawnParams);
 			if (IsValid(SpawnedTorus) == true)
 			{
-				UKismetSystemLibrary::PrintString(this, TEXT("OnShootTorus is called"));
+				//UKismetSystemLibrary::PrintString(this, TEXT("OnShootTorus is called"));
 
 				// // 레이저 액터의 OnLaserShrinkEnd Delegate에 바인딩
 				// SpawnedLaser->OnLaserShrinkEnd.AddDynamic(this, &AGBoss01::OnLaserShrinkEnd);
@@ -1117,7 +1117,7 @@ void AGBoss01::BeginShoot()
 {
 	Super::BeginShoot();
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginShoot is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginShoot is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -1132,7 +1132,7 @@ void AGBoss01::BeginShoot()
 
 void AGBoss01::PlayShootAnimMontage_NetMulticast_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayShootAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayShootAnimMontage is called by NetMulticast"));
 
 	// 애님 몽타주 재생
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
@@ -1153,7 +1153,7 @@ void AGBoss01::EndShoot(UAnimMontage* InMontage, bool bInterruped)
 {
 	Super::EndShoot(InMontage, bInterruped);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("EndShoot is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndShoot is called"));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bIsNowAttacking = false;
@@ -1170,7 +1170,7 @@ void AGBoss01::BeginShootWind()
 {
 	Super::BeginShootWind();
 
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginShootWind is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginShootWind is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -1185,7 +1185,7 @@ void AGBoss01::BeginShootWind()
 
 void AGBoss01::PlayShootWindAnimMontage_NetMulticast_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayShootWindAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayShootWindAnimMontage is called by NetMulticast"));
 
 	// 애님 몽타주 재생
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
@@ -1205,7 +1205,7 @@ void AGBoss01::EndShootWind(UAnimMontage* InMontage, bool bInterruped)
 {
 	Super::EndShootWind(InMontage, bInterruped);
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("EndShootWind is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndShootWind is called"));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bIsNowAttacking = false;
@@ -1222,7 +1222,7 @@ void AGBoss01::BeginShootMultiple()
 {
 	Super::BeginShootMultiple();
 
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginShootMultiple is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginShootMultiple is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -1237,7 +1237,7 @@ void AGBoss01::BeginShootMultiple()
 
 void AGBoss01::PlayShootMultipleAnimMontage_NetMulticast_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayShootMultipleAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayShootMultipleAnimMontage is called by NetMulticast"));
 
 	// 애님 몽타주 재생
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
@@ -1257,7 +1257,7 @@ void AGBoss01::EndShootMultiple(UAnimMontage* InMontage, bool bInterruped)
 {
 	Super::EndShootMultiple(InMontage, bInterruped);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("EndShootMultiple is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndShootMultiple is called"));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bIsNowAttacking = false;
@@ -1274,7 +1274,7 @@ void AGBoss01::BeginShootAOE()
 {
 	Super::BeginShootAOE();
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginShootAOE is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginShootAOE is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -1290,7 +1290,7 @@ void AGBoss01::BeginShootAOE()
 
 void AGBoss01::PlayShootAOEAnimMontage_NetMulticast_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayShootAOEAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayShootAOEAnimMontage is called by NetMulticast"));
 
 	// 애님 몽타주 재생
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
@@ -1310,7 +1310,7 @@ void AGBoss01::EndShootAOE(UAnimMontage* InMontage, bool bInterruped)
 {
 	Super::EndShootAOE(InMontage, bInterruped);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("EndShootAOE is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndShootAOE is called"));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bIsNowAttacking = false;
@@ -1327,7 +1327,7 @@ void AGBoss01::BeginShootLaser()
 {
 	Super::BeginShootLaser();
 
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginShootLaser is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginShootLaser is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -1342,7 +1342,7 @@ void AGBoss01::BeginShootLaser()
 
 void AGBoss01::PlayShootLaserAnimMontage_NetMulticast_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayShootLaserAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayShootLaserAnimMontage is called by NetMulticast"));
 
 	// 애님 몽타주 재생
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
@@ -1366,7 +1366,7 @@ void AGBoss01::EndShootLaser(UAnimMontage* InMontage, bool bInterruped)
 	
 	Super::EndShootLaser(InMontage, bInterruped);
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("EndShootLaser is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndShootLaser is called"));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	//bIsNowAttacking = false;
@@ -1379,7 +1379,7 @@ void AGBoss01::EndShootLaser(UAnimMontage* InMontage, bool bInterruped)
 
 void AGBoss01::OnLaserShrinkEnd()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("OnLaserShrinkStart is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnLaserShrinkStart is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -1392,7 +1392,7 @@ void AGBoss01::OnLaserShrinkEnd()
 
 void AGBoss01::PlayShootLaserFinishAnimMontage_NetMulticast_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayShootLaserFinishAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayShootLaserFinishAnimMontage is called by NetMulticast"));
 
 	// 애님 몽타주 재생
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
@@ -1411,7 +1411,7 @@ void AGBoss01::PlayShootLaserFinishAnimMontage_NetMulticast_Implementation()
 
 void AGBoss01::EndShootLaserFinish(UAnimMontage* InMontage, bool bInterruped)
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("EndShootLaserFinish is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndShootLaserFinish is called"));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bIsNowAttacking = false;
@@ -1428,7 +1428,7 @@ void AGBoss01::BeginShootTorus()
 {
 	Super::BeginShootTorus();
 
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginShootTorus is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginShootTorus is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -1443,7 +1443,7 @@ void AGBoss01::BeginShootTorus()
 
 void AGBoss01::PlayShootTorusAnimMontage_NetMulticast_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayShootTorusAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayShootTorusAnimMontage is called by NetMulticast"));
 
 	// 애님 몽타주 재생
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
@@ -1463,7 +1463,7 @@ void AGBoss01::EndShootTorus(UAnimMontage* InMontage, bool bInterruped)
 {
 	Super::EndShootTorus(InMontage, bInterruped);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("EndShootTorus is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndShootTorus is called"));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bIsNowAttacking = false;
@@ -1492,19 +1492,19 @@ void AGBoss01::OnJump()
 
 	// Server 에서만 처리
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("OnJump is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnJump is called"));
 
 	AGAIController* AIController = Cast<AGAIController>(GetController());
 	if(AIController == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
 		return;
 	}
 	//AGCharacter* TargetActor = Cast<AGCharacter>(AIController->TargetActor);
 	AGCharacter* TargetActor = Cast<AGCharacter>(AIController->GetBlackboardComponent()->GetValueAsObject(AGAIController::TargetActorKey));
 	if(TargetActor == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
 		return;
 	}
 
@@ -1542,7 +1542,7 @@ void AGBoss01::OnJump()
 	}
 	else
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("Failed to calculate projectile velocity!"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("Failed to calculate projectile velocity!"));
 	}
 	
 }
@@ -1674,7 +1674,7 @@ void AGBoss01::BeginShout()
 {
 	Super::BeginShout();
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginShout is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginShout is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));

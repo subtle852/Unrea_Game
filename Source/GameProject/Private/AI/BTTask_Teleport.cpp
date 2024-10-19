@@ -35,7 +35,7 @@ void UBTTask_Teleport::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 		&& Monster->bIsGroundBounding == false
 		&& Monster->bIsHitReactTransitioning == false)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("UBTTask_Teleport::TickTask In Conditional Statement")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("UBTTask_Teleport::TickTask In Conditional Statement")));
 		
 		Monster->Teleport();
 		

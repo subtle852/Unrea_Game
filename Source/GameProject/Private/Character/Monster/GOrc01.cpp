@@ -283,13 +283,13 @@ void AGOrc01::DrawDetectLine_NetMulticast_Implementation(const bool bResult, FVe
 
 	if(bResult == false)
 	{
-		DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
+		//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
 	}
 	else
 	{
-		DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
-		DrawDebugPoint(GetWorld(), PCLocation, 10.f, FColor::Red, false, 0.5f);
-		DrawDebugLine(GetWorld(), MonsterLocation, PCLocation, FColor::Red, false, 0.5f, 0u, 3.f);
+		//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
+		//DrawDebugPoint(GetWorld(), PCLocation, 10.f, FColor::Red, false, 0.5f);
+		//DrawDebugLine(GetWorld(), MonsterLocation, PCLocation, FColor::Red, false, 0.5f, 0u, 3.f);
 	}
 }
 
@@ -300,7 +300,7 @@ void AGOrc01::OnCheckHit()
 	if(HasAuthority() == false)
 		return;
 
-	UKismetSystemLibrary::PrintString(this, TEXT("OnCheckHit is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnCheckHit is called"));
 
 	TArray<FHitResult> HitResults;
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -330,8 +330,8 @@ void AGOrc01::OnCheckHit()
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
-						UKismetSystemLibrary::PrintString(
-							this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
+						//UKismetSystemLibrary::PrintString(
+							//this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
 
 						FDamageEvent DamageEvent;
 						HitResult.GetActor()->TakeDamage(10.f, DamageEvent, GetController(), this);
@@ -366,8 +366,8 @@ void AGOrc01::OnCheckHit()
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
-						UKismetSystemLibrary::PrintString(
-							this, FString::Printf(TEXT("Hit Actor Name: %s"), *CharacterMeshHitResult.GetActor()->GetName()));
+						//UKismetSystemLibrary::PrintString(
+							//this, FString::Printf(TEXT("Hit Actor Name: %s"), *CharacterMeshHitResult.GetActor()->GetName()));
 
 						SpawnBloodEffect_NetMulticast(CharacterMeshHitResult);
 					}
@@ -381,7 +381,7 @@ void AGOrc01::BeginAttack()
 {
 	Super::BeginAttack();
 
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginAttack is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginAttack is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -396,7 +396,7 @@ void AGOrc01::BeginAttack()
 
 void AGOrc01::PlayBasicAttackAnimMontage_NetMulticast_Implementation(int32 InAttackRandNum)
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayBasicAttackAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayBasicAttackAnimMontage is called by NetMulticast"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -440,23 +440,23 @@ void AGOrc01::DrawLine_NetMulticast_Implementation(const bool bResult)
 	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
 	float DebugLifeTime = 5.f;
 
-	DrawDebugCapsule(
-		GetWorld(),
-		Center,
-		HalfHeight,
-		BasicAttackRadius,
-		CapsuleRot,
-		DrawColor,
-		false,
-		DebugLifeTime
-	);
+	// DrawDebugCapsule(
+	// 	GetWorld(),
+	// 	Center,
+	// 	HalfHeight,
+	// 	BasicAttackRadius,
+	// 	CapsuleRot,
+	// 	DrawColor,
+	// 	false,
+	// 	DebugLifeTime
+	// );
 }
 
 void AGOrc01::EndAttack(UAnimMontage* InMontage, bool bInterruped)
 {
 	Super::EndAttack(InMontage, bInterruped);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("EndAttack is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndAttack is called"));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bIsNowAttacking = false;
@@ -471,7 +471,7 @@ void AGOrc01::BeginShout()
 {
 	Super::BeginShout();
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginShout is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginShout is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -528,7 +528,7 @@ void AGOrc01::PlayStunHitReactAnimMontage_NetMulticast_Implementation()
 	AnimInstance->StopAllMontages(0.0f);
 	AnimInstance->PlayAnimMontage(StunHitReactMontage);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactStunAnimMontage_NetMulticast is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactStunAnimMontage_NetMulticast is called by NetMulticast"));
 	
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	//GetCharacterMovement()->MaxWalkSpeed = 0.0f;
@@ -543,7 +543,7 @@ void AGOrc01::EndStunHitReact(UAnimMontage* InMontage, bool bInterrupted)
 	if(GetStatComponent()->GetCurrentHP() < KINDA_SMALL_NUMBER)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactStun is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactStun is called"));
 
 	if(bWillHitReactDuplicate)
 	{
@@ -593,7 +593,7 @@ void AGOrc01::PlayKnockDownHitReactAnimMontage_NetMulticast_Implementation()
 	AnimInstance->StopAllMontages(0.0f); 
 	AnimInstance->PlayAnimMontage(KnockDownHitReactMontage);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactKnockDownAnimMontage_NetMulticast is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactKnockDownAnimMontage_NetMulticast is called by NetMulticast"));
 	
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 
@@ -607,7 +607,7 @@ void AGOrc01::EndKnockDownHitReact(UAnimMontage* InMontage, bool bInterrupted)
 	if(GetStatComponent()->GetCurrentHP() < KINDA_SMALL_NUMBER)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactKnockDown is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactKnockDown is called"));
 
 	if(bWillHitReactDuplicate)
 	{
@@ -658,7 +658,7 @@ void AGOrc01::PlayAirBoundHitReactAnimMontage_NetMulticast_Implementation()
 	AnimInstance->StopAllMontages(0.0f);
 	AnimInstance->PlayAnimMontage(AirBoundHitReactMontage);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactAirBound is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactAirBound is called"));
 	
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	
@@ -672,7 +672,7 @@ void AGOrc01::EndAirBoundHitReact(UAnimMontage* InMontage, bool bInterrupted)
 	if(GetStatComponent()->GetCurrentHP() < KINDA_SMALL_NUMBER)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactAirBound is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactAirBound is called"));
 
 	if(bWillHitReactDuplicate)
 	{
@@ -714,7 +714,7 @@ void AGOrc01::PlayGroundBoundHitReactAnimMontage_NetMulticast_Implementation()
 		|| static_cast<bool>(tempHitReactStateArr[0]) == true)
 		// GroundBound 상태에서 Lying 상태로 전환되는 경우도 GroundBound라고 인지해줘야 함
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("tempHitReactStateArr[4] is true"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("tempHitReactStateArr[4] is true"));
 		// 중복 재생 예정인 경우
 		bWillHitReactDuplicate = true;
 	}
@@ -726,7 +726,7 @@ void AGOrc01::PlayGroundBoundHitReactAnimMontage_NetMulticast_Implementation()
 	AnimInstance->StopAllMontages(0.0f);
 	AnimInstance->PlayAnimMontage(GroundBoundHitReactMontage);
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactGroundBoundAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactGroundBoundAnimMontage is called by NetMulticast"));
 
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	
@@ -740,7 +740,7 @@ void AGOrc01::EndGroundBoundHitReact(UAnimMontage* InMontage, bool bInterrupted)
 	if(GetStatComponent()->GetCurrentHP() < KINDA_SMALL_NUMBER)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactGroundBound is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactGroundBound is called"));
 
 	if(bWillHitReactDuplicate)
 	{

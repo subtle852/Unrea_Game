@@ -670,7 +670,7 @@ float AGPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	{
 		if(AnimInstance->IsFalling() || bIsKnockDowning || bIsAirBounding)
 		{
-			UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("AirBoundHitReact_NetMulticast is will be called")));
+			//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("AirBoundHitReact_NetMulticast is will be called")));
 			
 			AirBoundHitReact_NetMulticast();
 	
@@ -880,8 +880,8 @@ void AGPlayerCharacter::OnCheckHit()
 				{
 					if(Monster->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
-						UKismetSystemLibrary::PrintString(
-							this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
+						//UKismetSystemLibrary::PrintString(
+							//this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
 				
 						ApplyDamageAndDrawLine_Server(HitResult, true, ECheckHitDirection::Forward);
 						
@@ -898,7 +898,7 @@ void AGPlayerCharacter::OnCheckHit()
 	}
 	else
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("Hit Actor Name: None"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("Hit Actor Name: None"));
 		
 		FHitResult NoHitResult;
 		ApplyDamageAndDrawLine_Server(NoHitResult, false, ECheckHitDirection::Forward);
@@ -964,8 +964,8 @@ void AGPlayerCharacter::OnCheckHitDown()
 				{
 					if(Monster->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
-						UKismetSystemLibrary::PrintString(
-							this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
+						//UKismetSystemLibrary::PrintString(
+							//this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
 
 						ApplyDamageAndDrawLine_Server(HitResult, true, ECheckHitDirection::Down);
 
@@ -982,7 +982,7 @@ void AGPlayerCharacter::OnCheckHitDown()
 	}
 	else
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("Hit Actor Name: None"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("Hit Actor Name: None"));
 		
 		FHitResult NoHitResult;
 		ApplyDamageAndDrawLine_Server(NoHitResult, false, ECheckHitDirection::Down);
@@ -1190,11 +1190,11 @@ void AGPlayerCharacter::OnCheckUpdateCanMove(bool InCanMove)
 						//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Detected!")));
 
 						// 오버랩 충돌 O 드로우 디버깅
-						DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
-						DrawDebugPoint(GetWorld(), Monster->GetActorLocation(), 10.f, FColor::Red, false, 0.5f);
-						DrawDebugLine(GetWorld(), this->GetActorLocation(), Monster->GetActorLocation(), FColor::Red,
-									  false,
-									  0.5f, 0u, 1.f);
+						//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
+						//DrawDebugPoint(GetWorld(), Monster->GetActorLocation(), 10.f, FColor::Red, false, 0.5f);
+						//DrawDebugLine(GetWorld(), this->GetActorLocation(), Monster->GetActorLocation(), FColor::Red,
+									  //false,
+									  //0.5f, 0u, 1.f);
 
 						// 몬스터 방향 쳐다보도록 회전
 						// 해당 부분은 UpdateRotation 애님노티파이에서도 해주고 여기서도 해주는 중
@@ -1212,7 +1212,7 @@ void AGPlayerCharacter::OnCheckUpdateCanMove(bool InCanMove)
 			if(bTempResult == false)
 			{
 				// 오버랩 충돌 X 드로우디버깅
-				DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
+				//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
 
 				bCanMoveInAttacking = InCanMove;
 			}
@@ -1245,56 +1245,74 @@ void AGPlayerCharacter::OnShootArrow()
 		);
 
 		bool bTempResult = false;
-
+		AGMonster* TargetMonster = nullptr;
+		float MinDistance = FLT_MAX;
+		
 		if (bResult == true)
 		{
 			for (auto const& OverlapResult : OverlapResults)
 			{
-				// 가장 먼저 들어오는 OverlapResults에만 발사하기 위한 조건
-				if(bTempResult == true)
-					break;
-			
-				if (IsValid(Cast<AGMonster>(OverlapResult.GetActor())))
+				// // 가장 먼저 들어오는 OverlapResults에만 발사하기 위한 조건
+				// if(bTempResult == true)
+				// 	break;
+
+				AGMonster* OverlappedMonster = Cast<AGMonster>(OverlapResult.GetActor());
+				if (::IsValid(OverlappedMonster))
 				{
-					AGMonster* Monster = Cast<AGMonster>(OverlapResult.GetActor());
-					bTempResult = true;
-					//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Detected!")));
-
-					// 오버랩 충돌 O 드로우 디버깅
-					DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
-					DrawDebugPoint(GetWorld(), Monster->GetActorLocation(), 10.f, FColor::Red, false, 0.5f);
-					DrawDebugLine(GetWorld(), this->GetActorLocation(), Monster->GetActorLocation(), FColor::Red,
-					              false,
-					              0.5f, 0u, 1.f);
-
-					// 몬스터 방향 쳐다보도록 회전
-					// 해당 부분은 UpdateRotation 애님노티파이에서도 해주고 여기서도 해주는 중
-					FVector Direction = Monster->GetActorLocation() - this->GetActorLocation();
-					Direction.Normalize(); 
-					this->SetActorRotation(Direction.Rotation());
-					UpdateRotation_Server(Direction.Rotation());
-
-					// 발사 방향 추출
-					FVector MuzzleLocation = WeaponInstance->GetArrowSpawnArrowComponent()->GetComponentLocation();
-					FVector HitLocation = Monster->GetActorLocation();
-		
-					FVector LaunchDirection = HitLocation - MuzzleLocation;
-					LaunchDirection.Normalize();
-					FRotator LaunchRotation = LaunchDirection.Rotation();
-
-					// 방향 조절 하는 경우
-					// HitLocation += FVector(0.0f, 0.0f, 500.0f);
-					// FVector LaunchDirection = HitLocation - MuzzleLocation;
-					// LaunchDirection.Normalize();
-					// FRotator LaunchRotation = LaunchDirection.Rotation();
-
-					DrawDebugSphere(GetWorld(), MuzzleLocation, 10.f, 16, FColor::Red, false, 10.f);
-					DrawDebugSphere(GetWorld(), HitLocation, 10.f, 16, FColor::Magenta, false, 10.f);
-					DrawDebugLine(GetWorld(), MuzzleLocation, HitLocation, FColor::Yellow, false, 10.f, 0, 1.f);
-
-					// 발사
-					OnShootArrow_Server(MuzzleLocation, LaunchRotation, LaunchDirection, Monster);
+					if(OverlappedMonster->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
+					{
+						bTempResult = true;
+					
+						float Distance = FVector::Dist(CenterPosition, OverlappedMonster->GetActorLocation());
+            
+						if (Distance < MinDistance)
+						{
+							MinDistance = Distance;
+							TargetMonster = OverlappedMonster;
+						}
+					}
 				}
+			}
+		}
+		
+		if(bTempResult == true)
+		{
+			if (IsValid(TargetMonster))
+			{
+				// 오버랩 충돌 O 드로우 디버깅
+				//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
+				//DrawDebugPoint(GetWorld(), Monster->GetActorLocation(), 10.f, FColor::Red, false, 0.5f);
+				//DrawDebugLine(GetWorld(), this->GetActorLocation(), Monster->GetActorLocation(), FColor::Red,
+				//false,
+				//0.5f, 0u, 1.f);
+
+				// 몬스터 방향 쳐다보도록 회전
+				// 해당 부분은 UpdateRotation 애님노티파이에서도 해주고 여기서도 해주는 중
+				FVector Direction = TargetMonster->GetActorLocation() - this->GetActorLocation();
+				Direction.Normalize(); 
+				this->SetActorRotation(Direction.Rotation());
+				UpdateRotation_Server(Direction.Rotation());
+
+				// 발사 방향 추출
+				FVector MuzzleLocation = WeaponInstance->GetArrowSpawnArrowComponent()->GetComponentLocation();
+				FVector HitLocation = TargetMonster->GetActorLocation();
+		
+				FVector LaunchDirection = HitLocation - MuzzleLocation;
+				LaunchDirection.Normalize();
+				FRotator LaunchRotation = LaunchDirection.Rotation();
+
+				// 방향 조절 하는 경우
+				// HitLocation += FVector(0.0f, 0.0f, 500.0f);
+				// FVector LaunchDirection = HitLocation - MuzzleLocation;
+				// LaunchDirection.Normalize();
+				// FRotator LaunchRotation = LaunchDirection.Rotation();
+
+				//DrawDebugSphere(GetWorld(), MuzzleLocation, 10.f, 16, FColor::Red, false, 10.f);
+				//DrawDebugSphere(GetWorld(), HitLocation, 10.f, 16, FColor::Magenta, false, 10.f);
+				//DrawDebugLine(GetWorld(), MuzzleLocation, HitLocation, FColor::Yellow, false, 10.f, 0, 1.f);
+
+				// 발사
+				OnShootArrow_Server(MuzzleLocation, LaunchRotation, LaunchDirection, TargetMonster);
 			}
 		}
 
@@ -1302,7 +1320,7 @@ void AGPlayerCharacter::OnShootArrow()
 		if(bTempResult == false)
 		{
 			// 오버랩 충돌 X 드로우디버깅
-			DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
+			//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
 
 			FVector MuzzleLocation = WeaponInstance->GetArrowSpawnArrowComponent()->GetComponentLocation();
 			FVector HitLocation;
@@ -1330,9 +1348,9 @@ void AGPlayerCharacter::OnShootArrow()
                 UpdateRotation_Server(InputDirectionVector.Rotation());
 			}
 
-			DrawDebugSphere(GetWorld(), MuzzleLocation, 10.f, 16, FColor::Red, false, 10.f);
-			DrawDebugSphere(GetWorld(), HitLocation, 10.f, 16, FColor::Magenta, false, 10.f);
-			DrawDebugLine(GetWorld(), MuzzleLocation, HitLocation, FColor::Yellow, false, 10.f, 0, 1.f);
+			//DrawDebugSphere(GetWorld(), MuzzleLocation, 10.f, 16, FColor::Red, false, 10.f);
+			//DrawDebugSphere(GetWorld(), HitLocation, 10.f, 16, FColor::Magenta, false, 10.f);
+			//DrawDebugLine(GetWorld(), MuzzleLocation, HitLocation, FColor::Yellow, false, 10.f, 0, 1.f);
 	
 			OnShootArrow_Server(MuzzleLocation, LaunchRotation, LaunchDirection, nullptr);
 		}
@@ -1366,12 +1384,12 @@ void AGPlayerCharacter::OnShootArrow()
 
 			FRotator LaunchRotation = LaunchDirection.Rotation();
 
-			DrawDebugSphere(GetWorld(), MuzzleLocation, 10.f, 16, FColor::Red, false, 10.f);
-			DrawDebugSphere(GetWorld(), CameraLocation, 10.f, 16, FColor::Yellow, false, 10.f);
-			DrawDebugSphere(GetWorld(), HitLocation, 10.f, 16, FColor::Magenta, false, 10.f);
+			//DrawDebugSphere(GetWorld(), MuzzleLocation, 10.f, 16, FColor::Red, false, 10.f);
+			//DrawDebugSphere(GetWorld(), CameraLocation, 10.f, 16, FColor::Yellow, false, 10.f);
+			//DrawDebugSphere(GetWorld(), HitLocation, 10.f, 16, FColor::Magenta, false, 10.f);
 		
-			DrawDebugLine(GetWorld(), MuzzleLocation, HitLocation, FColor::Yellow, false, 10.f, 0, 1.f);
-			DrawDebugLine(GetWorld(), CameraLocation, HitLocation, FColor::Blue, false, 10.f, 0, 1.f);
+			//DrawDebugLine(GetWorld(), MuzzleLocation, HitLocation, FColor::Yellow, false, 10.f, 0, 1.f);
+			//DrawDebugLine(GetWorld(), CameraLocation, HitLocation, FColor::Blue, false, 10.f, 0, 1.f);
 	
 			OnShootArrow_Server(MuzzleLocation, LaunchRotation, LaunchDirection, nullptr);
 		}
@@ -1481,7 +1499,7 @@ TObjectPtr<UGAnimInstance> AGPlayerCharacter::GetLinkedAnimInstance()
 
 	if(CurrentLinkedAnimInstance == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("CurrentLinkedAnimInstance is NULLPTR"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("CurrentLinkedAnimInstance is NULLPTR"));
 	}
 	
 	CurrentLinkedAnimInstance->InitializeMainAnimInstance(AnimInstance);
@@ -1554,6 +1572,8 @@ void AGPlayerCharacter::Landed(const FHitResult& Hit)
 
 void AGPlayerCharacter::InputChangeAnimMoveType(const FInputActionValue& InValue)
 {
+	ForDebug_IncreaseHP_Server();
+	
 	// TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	// ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	//
@@ -2106,6 +2126,9 @@ void AGPlayerCharacter::InputCrouch(const FInputActionValue& InValue)
 
 void AGPlayerCharacter::InputDash(const FInputActionValue& InValue)
 {
+	if (StatComponent->GetCurrentHP() <= KINDA_SMALL_NUMBER)
+		return;
+
 	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	if (AnimInstance->IsFalling())
@@ -3066,7 +3089,7 @@ void AGPlayerCharacter::OnShootArrow_Server_Implementation(FVector InWeaponMuzzl
 				AGProjectileActor* SpawnedArrow = GetWorld()->SpawnActor<AGProjectileActor>(ArrowClass, InWeaponMuzzleLocation, InLaunchRotation, SpawnParams);
 				if (IsValid(SpawnedArrow) == true)
 				{
-					UKismetSystemLibrary::PrintString(this, TEXT("OnShootArrow_Server NO HOMING is called"));
+					//UKismetSystemLibrary::PrintString(this, TEXT("OnShootArrow_Server NO HOMING is called"));
 				}
 			}
 			else// 유도탄
@@ -3075,7 +3098,7 @@ void AGPlayerCharacter::OnShootArrow_Server_Implementation(FVector InWeaponMuzzl
 				if (IsValid(SpawnedHomingArrow) == true)
 				{
 					SpawnedHomingArrow->InitializeHoming(InTargetMonster);
-					UKismetSystemLibrary::PrintString(this, TEXT("OnShootArrow_Server HOMING is called"));
+					//UKismetSystemLibrary::PrintString(this, TEXT("OnShootArrow_Server HOMING is called"));
 				}
 			}
 		}
@@ -3975,7 +3998,7 @@ void AGPlayerCharacter::KnockDownHitReact_NetMulticast_Implementation()
 
 void AGPlayerCharacter::EndKnockDownHitReact_Common(UAnimMontage* Montage, bool bInterrupted)
 {
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("EndKnockDownHitReact_Common is called")));
+	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("EndKnockDownHitReact_Common is called")));
 	
 	if (OnKnockDownHitReactMontageEndedDelegate.IsBound() == true)
 	{
@@ -4048,6 +4071,14 @@ void AGPlayerCharacter::EndGroundBoundHitReact_Common(UAnimMontage* Montage, boo
 
 	bIsGroundBounding = false;
 	bIsLying = false;
+}
+
+void AGPlayerCharacter::ForDebug_IncreaseHP_Server_Implementation()
+{
+	if(HasAuthority() == true)
+	{
+		GetStatComponent()->SetCurrentHP(GetStatComponent()->GetCurrentHP() + 50.f);
+	}
 }
 
 void AGPlayerCharacter::StopAllMontage_NetMulticast_Implementation()
@@ -4159,16 +4190,16 @@ void AGPlayerCharacter::DrawLine_NetMulticast_Implementation(const bool bResult,
 		FColor DrawColor = bResult ? FColor::Green : FColor::Red;
 		float DebugLifeTime = 5.f;
 		
-		DrawDebugCapsule(
-			GetWorld(),
-			CapsuleCenter,
-			CapsuleHalfHeight,
-			AirAttackRadius,
-			CapsuleRot,
-			DrawColor,
-			false,
-			DebugLifeTime
-		);
+		// DrawDebugCapsule(
+		// 	GetWorld(),
+		// 	CapsuleCenter,
+		// 	CapsuleHalfHeight,
+		// 	AirAttackRadius,
+		// 	CapsuleRot,
+		// 	DrawColor,
+		// 	false,
+		// 	DebugLifeTime
+		// );
 	}
 	else
 	{
@@ -4179,16 +4210,16 @@ void AGPlayerCharacter::DrawLine_NetMulticast_Implementation(const bool bResult,
 		FColor DrawColor = bResult ? FColor::Green : FColor::Red;
 		float DebugLifeTime = 5.f;
 		
-		DrawDebugCapsule(
-			GetWorld(),
-			Center,
-			HalfHeight,
-			BasicAttackRadius,
-			CapsuleRot,
-			DrawColor,
-			false,
-			DebugLifeTime
-		);
+		// DrawDebugCapsule(
+		// 	GetWorld(),
+		// 	Center,
+		// 	HalfHeight,
+		// 	BasicAttackRadius,
+		// 	CapsuleRot,
+		// 	DrawColor,
+		// 	false,
+		// 	DebugLifeTime
+		// );
 	}
 }
 

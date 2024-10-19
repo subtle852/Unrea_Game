@@ -94,8 +94,10 @@ void AGHomingProjectileActor::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	    BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AGHomingProjectileActor::OnBeginOverlap);
     }
 	
-
-	OwnerActor = GetOwner();
+	if(HasAuthority() == true)
+	{
+		OwnerActor = GetOwner();
+	}
 	Lifetime = 0.0f;
 	
  }
@@ -249,7 +251,7 @@ void AGHomingProjectileActor::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	{
 		if(OtherActor != GetOwner())
 		{
-			UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnHit() has been called in Server")));
+			//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnHit() has been called in Server")));
 		
 			//FString OtherActorName = OtherActor->GetName();
 			//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Hit Actor: %s"), *OtherActorName));
@@ -309,50 +311,92 @@ void AGHomingProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComp
 	
 	if (HasAuthority() == false)// 각 클라에서 시작
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Client")));
-		if(OtherActor != GetOwner())
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Client")));
+		if(OtherActor != OwnerActor)
 		{
-			ProjectileMovementComponent->StopMovementImmediately();
-			ProjectileMovementComponent->bIsHomingProjectile = false;
+			{
+				AGMonster* OwnerCharacter = Cast<AGMonster>(OwnerActor);
+				if(IsValid(OwnerCharacter) == true)
+				{
+					AGPlayerCharacter* HittedCharacter = Cast<AGPlayerCharacter>(OtherActor);
+					if (IsValid(HittedCharacter) == true)
+					{
+						ProjectileMovementComponent->StopMovementImmediately();
+						ProjectileMovementComponent->bIsHomingProjectile = false;
 			
-			Mesh->SetHiddenInGame(true);
+						Mesh->SetHiddenInGame(true);
 
-			BoxComponent->SetSimulatePhysics(false);
-			BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			BoxComponent->SetHiddenInGame(true);
+						BoxComponent->SetSimulatePhysics(false);
+						BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+						BoxComponent->SetHiddenInGame(true);
 			
-			ParticleSystemComponent->Activate(true);
+						ParticleSystemComponent->Activate(true);
 			
-			OnBeginOverlap_Server();
+						OnBeginOverlap_Server();
+					}
+				}
+			}
+			{
+				AGPlayerCharacter* HittedCharacter = Cast<AGPlayerCharacter>(OwnerActor);
+				if (IsValid(HittedCharacter) == true)
+				{
+					AGMonster* OwnerCharacter = Cast<AGMonster>(OtherActor);
+					if(IsValid(OwnerCharacter) == true)
+					{
+						ProjectileMovementComponent->StopMovementImmediately();
+						ProjectileMovementComponent->bIsHomingProjectile = false;
+			
+						Mesh->SetHiddenInGame(true);
+
+						BoxComponent->SetSimulatePhysics(false);
+						BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+						BoxComponent->SetHiddenInGame(true);
+			
+						ParticleSystemComponent->Activate(true);
+			
+						OnBeginOverlap_Server();
+					}
+				}
+			}
 		}
 	}
 	if (HasAuthority() == true)// 중요 로직은 서버에서 처리
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Server")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Server")));
 		
 		if(OtherActor != GetOwner())
 		{
-			AGMonster* HittedMonster = Cast<AGMonster>(OtherActor);
-			if (IsValid(HittedMonster) == true)
 			{
-				//UKismetSystemLibrary::PrintString(this, TEXT("TakeDamage is called"));
-				
-				FDamageEvent DamageEvent;
-				// FAttackDamageEvent* AttackDamageEvent = static_cast<FAttackDamageEvent*>(&DamageEvent);
-				// AttackDamageEvent->AttackType = EAttackType::Basic;
-				
-				HittedMonster->TakeDamage(2.f, DamageEvent, GetInstigatorController(), GetOwner());
-			}
-			AGPlayerCharacter* HittedCharacter = Cast<AGPlayerCharacter>(OtherActor);
-			if (IsValid(HittedCharacter) == true)
-			{
-				if(HittedCharacter->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER
-					&& HittedCharacter->GetStatComponent()->IsInvincible() == false)
+				AGMonster* OwnerCharacter = Cast<AGMonster>(OwnerActor);
+				if(IsValid(OwnerCharacter) == true)
 				{
-					//UKismetSystemLibrary::PrintString(this, TEXT("TakeDamage is called"));
+					AGPlayerCharacter* HittedCharacter = Cast<AGPlayerCharacter>(OtherActor);
+					if (IsValid(HittedCharacter) == true)
+					{
+						if(HittedCharacter->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER
+						&& HittedCharacter->GetStatComponent()->IsInvincible() == false)
+						{
+							//UKismetSystemLibrary::PrintString(this, TEXT("TakeDamage is called"));
 				
-					FDamageEvent DamageEvent;
-					HittedCharacter->TakeDamage(2.f, DamageEvent, GetInstigatorController(), GetOwner());
+							FDamageEvent DamageEvent;
+							HittedCharacter->TakeDamage(2.f, DamageEvent, GetInstigatorController(), GetOwner());
+						}
+					}
+				}
+			}
+			{
+				AGPlayerCharacter* OwnerCharacter = Cast<AGPlayerCharacter>(OwnerActor);
+				if (IsValid(OwnerCharacter) == true)
+				{
+					AGMonster* HittedCharacter = Cast<AGMonster>(OtherActor);
+					if(IsValid(HittedCharacter) == true)
+					{
+						FDamageEvent DamageEvent;
+						// FAttackDamageEvent* AttackDamageEvent = static_cast<FAttackDamageEvent*>(&DamageEvent);
+						// AttackDamageEvent->AttackType = EAttackType::Basic;
+				
+						HittedCharacter->TakeDamage(2.f, DamageEvent, GetInstigatorController(), GetOwner());
+					}
 				}
 			}
 		}

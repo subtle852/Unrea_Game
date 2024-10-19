@@ -16,12 +16,12 @@ void AGUIPlayerController_Load::BeginPlay()
 		if (NextLevelString.Contains(TEXT(".")) && !NextLevelString.IsEmpty())
 		// 로비에서 인게임으로 들어가는 경우
 		{
-			UKismetSystemLibrary::PrintString(this, TEXT("Go To TempLevel in Client"));
+			//UKismetSystemLibrary::PrintString(this, TEXT("Go To TempLevel in Client"));
 			UGameplayStatics::OpenLevel(GameMode, *NextLevelString, false);
 		}
 		else
 		{
-			UKismetSystemLibrary::PrintString(this, TEXT("Go To OtherLevel in Client"));
+			//UKismetSystemLibrary::PrintString(this, TEXT("Go To OtherLevel in Client"));
 			UGameplayStatics::OpenLevel(GameMode, *NextLevelString, false);
 		}
 	}

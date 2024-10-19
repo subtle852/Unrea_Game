@@ -3,7 +3,10 @@
 
 #include "Component/GStatComponent.h"
 
+#include "Character/GPlayerCharacter.h"
+#include "Character/Monster/GBoss01.h"
 #include "Character/Monster/GMage01.h"
+#include "Character/Monster/GOrc01.h"
 #include "Game/GGameInstance.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
@@ -44,13 +47,40 @@ void UGStatComponent::BeginPlay()
 		AGCharacter* Character = Cast<AGCharacter>(GetOwner());
 		if (::IsValid(Character))
 		{
-			if (Character->IsA(AGMage01::StaticClass()))
+			if (Character->IsA(AGPlayerCharacter::StaticClass()))
 			{
-				// Mage인 경우
+				// PlayerCharacter
+				if (GameInstance->GetCharacterStatDataTable() != nullptr
+					|| GameInstance->GetCharacterStatDataTableRow(1) != nullptr)
+				{
+					NewMaxHP = GameInstance->GetCharacterStatDataTableRow(1)->MaxHP;
+				}
+			}
+			else if (Character->IsA(AGBoss01::StaticClass()))
+			{
+				// Boss
 				if (GameInstance->GetCharacterStatDataTable() != nullptr
 					|| GameInstance->GetCharacterStatDataTableRow(2) != nullptr)
 				{
 					NewMaxHP = GameInstance->GetCharacterStatDataTableRow(2)->MaxHP;
+				}
+			}
+			else if (Character->IsA(AGOrc01::StaticClass()))
+			{
+				// Orc
+				if (GameInstance->GetCharacterStatDataTable() != nullptr
+					|| GameInstance->GetCharacterStatDataTableRow(3) != nullptr)
+				{
+					NewMaxHP = GameInstance->GetCharacterStatDataTableRow(3)->MaxHP;
+				}
+			}
+			else if (Character->IsA(AGMage01::StaticClass()))
+			{
+				// Mage
+				if (GameInstance->GetCharacterStatDataTable() != nullptr
+					|| GameInstance->GetCharacterStatDataTableRow(4) != nullptr)
+				{
+					NewMaxHP = GameInstance->GetCharacterStatDataTableRow(4)->MaxHP;
 				}
 			}
 			else
@@ -94,7 +124,7 @@ void UGStatComponent::SetMaxHP(float InMaxHP)
 {
 	if (OnMaxHPChangedDelegate.IsBound() == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("SetMaxHP() has been called")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("SetMaxHP() has been called")));
 		OnMaxHPChangedDelegate.Broadcast(MaxHP, InMaxHP);
 	}
 
@@ -105,7 +135,7 @@ void UGStatComponent::SetCurrentHP(float InCurrentHP)
 {
 	if (OnCurrentHPChangedDelegate.IsBound() == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("SetCurrentHP() has been called")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("SetCurrentHP() has been called")));
 		OnCurrentHPChangedDelegate.Broadcast(CurrentHP, InCurrentHP);
 	}
 
@@ -124,7 +154,7 @@ void UGStatComponent::SetMaxSP(float InMaxSP)
 {
 	if (OnMaxSPChangedDelegate.IsBound() == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("SetMaxSP() has been called")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("SetMaxSP() has been called")));
 		OnMaxSPChangedDelegate.Broadcast(MaxSP, InMaxSP);
 	}
 
@@ -140,7 +170,7 @@ void UGStatComponent::SetCurrentSP(float InCurrentSP)
 	
 	if (OnCurrentSPChangedDelegate.IsBound() == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("SetCurrentSP() has been called")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("SetCurrentSP() has been called")));
 		OnCurrentSPChangedDelegate.Broadcast(CurrentSP, InCurrentSP);
 	}
 

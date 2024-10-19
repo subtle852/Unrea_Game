@@ -429,6 +429,9 @@ private:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void StopAllMontage_NetMulticast();
+
+	UFUNCTION(Server, Reliable)
+	void ForDebug_IncreaseHP_Server();
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AGPlayerCharacter|Component", meta = (AllowPrivateAccess))

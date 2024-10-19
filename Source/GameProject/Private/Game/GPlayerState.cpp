@@ -52,7 +52,7 @@ void AGPlayerState::InitPlayerState()
 
 void AGPlayerState::AddCurrentKillCount(int32 InCurrentKillCount)
 {
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("AddCurrentKillCount is called")));
+	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("AddCurrentKillCount is called")));
 	
 	OnCurrentKillCountChangedDelegate.Broadcast(CurrentKillCount, CurrentKillCount + InCurrentKillCount);
 

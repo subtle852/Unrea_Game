@@ -140,7 +140,7 @@ void AGWindProjectileActor::OnHit(UPrimitiveComponent* HitComponent, AActor* Oth
 
 	if (HasAuthority() == false)// 각 클라에서 시작
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnHit() has been called in Client")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnHit() has been called in Client")));
 		
 		ProjectileMovementComponent->StopMovementImmediately();
 		
@@ -204,7 +204,7 @@ void AGWindProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	
 	if (HasAuthority() == false)// 각 클라에서 시작
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Client")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Client")));
 		
 		if(OtherActor != GetOwner())
 		{
@@ -226,7 +226,7 @@ void AGWindProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	}
 	if (HasAuthority() == true)// 중요 로직은 서버에서 처리
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Server")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Server")));
 		
 		if(OtherActor != GetOwner())
 		{

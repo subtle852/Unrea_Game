@@ -118,7 +118,7 @@ float AGCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 	
 	StatComponent->SetCurrentHP(StatComponent->GetCurrentHP() - FinalDamageAmount);
 
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s [%.1f / %.1f]"), *GetName(), StatComponent->GetCurrentHP(), StatComponent->GetMaxHP()));
+	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s [%.1f / %.1f]"), *GetName(), StatComponent->GetCurrentHP(), StatComponent->GetMaxHP()));
 
 	return FinalDamageAmount;
 }

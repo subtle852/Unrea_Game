@@ -91,17 +91,17 @@ EBTNodeResult::Type UBTTask_DetectAnotherTarget::ExecuteTask(UBehaviorTreeCompon
 	
 	if(bIsDetectAnotherTarget == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Detect Another Target!")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Detect Another Target!")));
 	
-		Monster->DrawDetectLine(true, CenterPosition, DetectRadius, AIC->TargetActor->GetActorLocation(),
-			Monster->GetActorLocation());
+		//Monster->DrawDetectLine(true, CenterPosition, DetectRadius, AIC->TargetActor->GetActorLocation(),
+			//Monster->GetActorLocation());
 	}
 	else
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Can't Detect Another Target!")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Can't Detect Another Target!")));
 	
-		Monster->DrawDetectLine(false, CenterPosition, DetectRadius, FVector::ZeroVector,
-			Monster->GetActorLocation());
+		//Monster->DrawDetectLine(false, CenterPosition, DetectRadius, FVector::ZeroVector,
+			//Monster->GetActorLocation());
 	}
 	
 	return EBTNodeResult::Succeeded;

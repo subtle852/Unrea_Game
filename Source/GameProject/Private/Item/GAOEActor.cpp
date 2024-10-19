@@ -148,11 +148,11 @@ void AGAOEActor::DrawDebug_NetMulticast_Implementation(bool bInResult, FVector I
 	// 클라만
 	if(bInResult == true)
 	{
-		DrawDebugSphere(GetWorld(), InCenterPosition, AOEExplosionRadius, 16, FColor::Red, false, 0.5f);
+		//DrawDebugSphere(GetWorld(), InCenterPosition, AOEExplosionRadius, 16, FColor::Red, false, 0.5f);
 	}
 	else
 	{
-		DrawDebugSphere(GetWorld(), InCenterPosition, AOEExplosionRadius, 16, FColor::Green, false, 0.5f);
+		//DrawDebugSphere(GetWorld(), InCenterPosition, AOEExplosionRadius, 16, FColor::Green, false, 0.5f);
 	}
 }
 

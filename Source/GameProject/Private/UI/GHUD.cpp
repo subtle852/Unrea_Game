@@ -76,7 +76,7 @@ void UGHUD::BindPlayerState(AGPlayerState* InPlayerState)
 
 void UGHUD::OnKillCountChanged(int32 InOldKillCount, int32 InNewKillCount)
 {
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnKillCountChanged is called with %d"), InNewKillCount));
+	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnKillCountChanged is called with %d"), InNewKillCount));
 	
 	FString KillCountString = FString::Printf(TEXT("%d"), InNewKillCount);
 	KillCountText->SetText(FText::FromString(KillCountString));

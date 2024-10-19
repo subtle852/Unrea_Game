@@ -64,12 +64,12 @@ void UBTService_DetectPlayerCharacter::TickNode(UBehaviorTreeComponent& OwnerCom
 							OwnerComp.GetBlackboardComponent()->SetValueAsObject(AGAIController::TargetActorKey, PC);
 							AIC->TargetActor = PC;
 
-							UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Detected!")));
+							//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Detected!")));
 							//DrawDebugSphere(World, CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
 							//DrawDebugPoint(World, PC->GetActorLocation(), 10.f, FColor::Red, false, 0.5f);
 							//DrawDebugLine(World, Monster->GetActorLocation(), PC->GetActorLocation(), FColor::Red, false, 0.5f, 0u, 3.f);
 
-							Monster->DrawDetectLine(true, CenterPosition, DetectRadius, PC->GetActorLocation(), Monster->GetActorLocation());
+							//Monster->DrawDetectLine(true, CenterPosition, DetectRadius, PC->GetActorLocation(), Monster->GetActorLocation());
 
 							return;
 						}
@@ -83,7 +83,7 @@ void UBTService_DetectPlayerCharacter::TickNode(UBehaviorTreeComponent& OwnerCom
 
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(AGAIController::IsShoutKey, false);
 		
-		Monster->DrawDetectLine(false, CenterPosition, DetectRadius, FVector::ZeroVector, Monster->GetActorLocation());
+		//Monster->DrawDetectLine(false, CenterPosition, DetectRadius, FVector::ZeroVector, Monster->GetActorLocation());
 		//DrawDebugSphere(World, CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
 		
 	}

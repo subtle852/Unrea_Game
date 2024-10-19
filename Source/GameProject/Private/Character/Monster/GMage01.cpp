@@ -152,13 +152,13 @@ void AGMage01::DrawDetectLine_NetMulticast_Implementation(const bool bResult, FV
 
 	if(bResult == false)
 	{
-		DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
+		//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
 	}
 	else
 	{
-		DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
-		DrawDebugPoint(GetWorld(), PCLocation, 10.f, FColor::Red, false, 0.5f);
-		DrawDebugLine(GetWorld(), MonsterLocation, PCLocation, FColor::Red, false, 0.5f, 0u, 3.f);
+		//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
+		//DrawDebugPoint(GetWorld(), PCLocation, 10.f, FColor::Red, false, 0.5f);
+		//DrawDebugLine(GetWorld(), MonsterLocation, PCLocation, FColor::Red, false, 0.5f, 0u, 3.f);
 	}
 }
 
@@ -169,7 +169,7 @@ void AGMage01::OnCheckHit()
 	if(HasAuthority() == false)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("OnCheckHit is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnCheckHit is called"));
 	
 	TArray<FHitResult> HitResults;
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -199,7 +199,7 @@ void AGMage01::OnCheckHit()
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
-						UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
+						//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Hit Actor Name: %s"), *HitResult.GetActor()->GetName()));
 				
 						FDamageEvent DamageEvent;
 						HitResult.GetActor()->TakeDamage(10.f, DamageEvent, GetController(), this);
@@ -234,8 +234,8 @@ void AGMage01::OnCheckHit()
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
-						UKismetSystemLibrary::PrintString(
-							this, FString::Printf(TEXT("Hit Actor Name: %s"), *CharacterMeshHitResult.GetActor()->GetName()));
+						//UKismetSystemLibrary::PrintString(
+							//this, FString::Printf(TEXT("Hit Actor Name: %s"), *CharacterMeshHitResult.GetActor()->GetName()));
 				
 						SpawnBloodEffect_NetMulticast(CharacterMeshHitResult);
 					}
@@ -249,7 +249,7 @@ void AGMage01::BeginAttack()
 {
 	Super::BeginAttack();
 
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginAttack is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginAttack is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -262,7 +262,7 @@ void AGMage01::BeginAttack()
 
 void AGMage01::PlayBasicAttackAnimMontage_NetMulticast_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayBasicAttackAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayBasicAttackAnimMontage is called by NetMulticast"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -306,27 +306,27 @@ void AGMage01::OnShootProjectile()
 	if(HasAuthority() == false)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("OnShootProjectile is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("OnShootProjectile is called"));
 
 	// 발사 방향 추출
 	AGAIController* AIController = Cast<AGAIController>(GetController());
 	if(AIController == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("AIController is Invalid"));
 		return;
 	}
 	//AGCharacter* TargetActor = Cast<AGCharacter>(AIController->TargetActor);
 	AGCharacter* TargetActor = Cast<AGCharacter>(AIController->GetBlackboardComponent()->GetValueAsObject(AGAIController::TargetActorKey));
 	if(TargetActor == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
+		//UKismetSystemLibrary::PrintString(this, TEXT("TargetActor is Invalid"));
 		return;
 	}
 	
 	if(IsValid(AIController) == true && IsValid(TargetActor) == true)
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(
-											TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(
+											//TEXT("Target Actor Name: %s"), *TargetActor->GetName()));
 		
 		//UKismetSystemLibrary::PrintString(this, TEXT("AIController & AIController is Vaild"));
 		//FVector MuzzleLocation = WeaponInstance->GetArrowSpawnArrowComponent()->GetComponentLocation();
@@ -335,7 +335,7 @@ void AGMage01::OnShootProjectile()
 		if (GetMesh()->DoesSocketExist(WeaponSocket) == true)
 		{
 			MuzzleLocation = GetMesh()->GetSocketLocation(WeaponSocket);
-			UKismetSystemLibrary::PrintString(this, TEXT("MuzzleLocation is Vaild"));
+			//UKismetSystemLibrary::PrintString(this, TEXT("MuzzleLocation is Vaild"));
 		}
 		FVector HitLocation = TargetActor->GetActorLocation();
 		
@@ -359,7 +359,7 @@ void AGMage01::OnShootProjectile()
 			if (IsValid(SpawnedArrow) == true)
 			{
 				
-				UKismetSystemLibrary::PrintString(this, TEXT("OnShoot is called"));
+				//UKismetSystemLibrary::PrintString(this, TEXT("OnShoot is called"));
 			}
 		}
 	}
@@ -369,7 +369,7 @@ void AGMage01::BeginShoot()
 {
 	Super::BeginShoot();
 
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginShoot is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginShoot is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -382,7 +382,7 @@ void AGMage01::BeginShoot()
 
 void AGMage01::PlayShootAnimMontage_NetMulticast_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayShootAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayShootAnimMontage is called by NetMulticast"));
 
 	// 애님 몽타주 재생
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
@@ -463,7 +463,7 @@ void AGMage01::EndShoot(UAnimMontage* InMontage, bool bInterruped)
 {
 	Super::EndShoot(InMontage, bInterruped);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("EndShoot is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndShoot is called"));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bIsNowAttacking = false;
@@ -483,23 +483,23 @@ void AGMage01::DrawLine_NetMulticast_Implementation(const bool bResult)
 	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
 	float DebugLifeTime = 5.f;
 
-	DrawDebugCapsule(
-		GetWorld(),
-		Center,
-		HalfHeight,
-		BasicAttackRadius,
-		CapsuleRot,
-		DrawColor,
-		false,
-		DebugLifeTime
-	);
+	// DrawDebugCapsule(
+	// 	GetWorld(),
+	// 	Center,
+	// 	HalfHeight,
+	// 	BasicAttackRadius,
+	// 	CapsuleRot,
+	// 	DrawColor,
+	// 	false,
+	// 	DebugLifeTime
+	// );
 }
 
 void AGMage01::EndAttack(UAnimMontage* InMontage, bool bInterruped)
 {
 	Super::EndAttack(InMontage, bInterruped);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("EndAttack is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndAttack is called"));
 	
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bIsNowAttacking = false;
@@ -514,7 +514,7 @@ void AGMage01::BeginShout()
 {
 	Super::BeginShout();
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("BeginShout is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("BeginShout is called"));
 	
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));

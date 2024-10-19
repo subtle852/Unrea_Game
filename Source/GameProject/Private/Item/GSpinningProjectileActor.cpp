@@ -129,6 +129,31 @@ void AGSpinningProjectileActor::Tick(float DeltaTime)
 			//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Tick_HomingTarget has been called")));
 			//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("HomingTarget Location is %s"), *HomingTarget->GetActorLocation().ToString()));
 		}
+
+		// 플레이어로부터의 거리 체크
+		if (IsValid(OwnerActor))
+		{
+			float DistanceFromInstigator = FVector::Dist(BoxComponent->GetComponentLocation(), OwnerActor->GetActorLocation());
+
+			//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("DistanceFromInstigator is %f"), DistanceFromInstigator));
+			//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("GetActorLocation is %s "), *BoxComponent->GetComponentLocation().ToString()));
+			
+			if (DistanceFromInstigator > MaxDistance)
+			{
+				//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Destroy has been called")));
+				Mesh->SetVisibility(false);
+				TrailEffect->SetVisibility(false);
+			}
+		}
+
+		// Lifetime 체크
+		Lifetime += DeltaTime;
+		if (Lifetime > MaxLifetime)
+		{
+			//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Destroy has been called")));
+			Mesh->SetVisibility(false);
+			TrailEffect->SetVisibility(false);
+		}
 		
 	}
 	
@@ -144,8 +169,8 @@ void AGSpinningProjectileActor::Tick(float DeltaTime)
 			
 			if (DistanceFromInstigator > MaxDistance)
 			{
-				UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Destroy has been called")));
-				Destroy();
+				//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Destroy has been called")));
+				SetLifeSpan(0.5f);
 			}
 		}
 
@@ -153,8 +178,8 @@ void AGSpinningProjectileActor::Tick(float DeltaTime)
 		Lifetime += DeltaTime;
 		if (Lifetime > MaxLifetime)
 		{
-			UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Destroy has been called")));
-			Destroy();
+			//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Destroy has been called")));
+			SetLifeSpan(0.5f);
 		}
 	}
 	
@@ -167,7 +192,7 @@ void AGSpinningProjectileActor::OnHit(UPrimitiveComponent* HitComponent, AActor*
 
 	if (HasAuthority() == false)// 각 클라에서 시작
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnHit() has been called in Client")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnHit() has been called in Client")));
 		
 		ProjectileMovementComponent->StopMovementImmediately();
 		
@@ -225,7 +250,7 @@ void AGSpinningProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCo
 	
 	if (HasAuthority() == false)// 각 클라에서 시작
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Client")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Client")));
 		
 		if(OtherActor != GetOwner())
 		{
@@ -245,7 +270,7 @@ void AGSpinningProjectileActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCo
 	}
 	if (HasAuthority() == true)// 중요 로직은 서버에서 처리
 	{
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Server")));
+		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnBeginOverlap() has been called in Server")));
 		
 		if(OtherActor != GetOwner())
 		{
@@ -364,7 +389,7 @@ void AGSpinningProjectileActor::TimelineCallback(float val)
 
 void AGSpinningProjectileActor::TimelineFinishedCallback()
 {
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("TimelineFinishedCallback is called")));
+	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("TimelineFinishedCallback is called")));
 
 	Spinning_Server();
 }

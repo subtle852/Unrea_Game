@@ -155,7 +155,7 @@ void AGTorusActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 				if(HittedCharacter->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER
 						&& HittedCharacter->GetStatComponent()->IsInvincible() == false)
 				{
-					UKismetSystemLibrary::PrintString(this, TEXT("TakeDamage is called"));
+					//UKismetSystemLibrary::PrintString(this, TEXT("TakeDamage is called"));
 				
 					FDamageEvent DamageEvent;
 					HittedCharacter->TakeDamage(2.f, DamageEvent, GetInstigatorController(), this);
