@@ -7,7 +7,6 @@
 #include "BTTask_GetRandNum.generated.h"
 
 UENUM(BlueprintType)
-//UENUM(Blueprintable)
 enum class ERandNumType : uint8
 {
 	None,
@@ -35,10 +34,10 @@ private:
 	
 private:
 	UPROPERTY()
-	UBehaviorTreeComponent* CachedOwnerComp;
+	TObjectPtr<UBehaviorTreeComponent> CachedOwnerComp;
 
 	UPROPERTY()
-	class AGAIController* CachedAIController;
+	TObjectPtr<class AGAIController> CachedAIController;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GetPatternAttackRandNum", meta = (AllowPrivateAccess))
 	ERandNumType NumType;

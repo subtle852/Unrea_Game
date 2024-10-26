@@ -34,7 +34,7 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	// , true, true, FLinearColor(0, 0.66, 1), 2 );
 
 	AGBoss01* Boss = Cast<AGBoss01>(Monster);
-	if(::IsValid(Boss))// 해당 조건문은 보스만 사용 (일반 몬스터는 Task 자체가 중단되기에 필요없음)
+	if(IsValid(Boss))// 해당 조건문은 보스만 사용 (일반 몬스터는 Task 자체가 중단되기에 필요없음)
 	{
 		if(Monster->bIsNowAttacking == false
 			&& Monster->bIsLying == false 
@@ -79,7 +79,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	CachedAIController = AIController;
 
 	AGBoss01* Boss = Cast<AGBoss01>(Monster);
-	if(::IsValid(Boss))// 해당 조건문은 보스만 사용 (일반 몬스터는 Task 자체가 중단되기에 필요없음)
+	if(IsValid(Boss))// 해당 조건문은 보스만 사용 (일반 몬스터는 Task 자체가 중단되기에 필요없음)
 	{
 		if(Monster->bIsLying || Monster->bIsStunning || Monster->bIsKnockDowning || Monster->bIsAirBounding || Monster->bIsGroundBounding || Monster->bIsHitReactTransitioning)
 		{

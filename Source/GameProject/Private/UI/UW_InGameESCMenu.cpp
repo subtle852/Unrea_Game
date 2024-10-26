@@ -19,7 +19,7 @@ void UUW_InGameESCMenu::NativeConstruct()
 void UUW_InGameESCMenu::OnResumeButtonClicked()
 {
 	AGPlayerController* PlayerController = Cast<AGPlayerController>(GetOwningPlayer());
-	if (true == ::IsValid(PlayerController))
+	if (IsValid(PlayerController) == true)
 	{
 		PlayerController->ToggleInGameESCMenu();
 	}

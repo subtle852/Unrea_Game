@@ -75,7 +75,7 @@ protected:
 	void DeactivateHitRagdoll(FName InPivotBoneName);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AGBoss01|HitReact", meta = (AllowPrivateAccess))
-	uint8 bIsRagdollActive;
+	uint8 bIsRagdollActive : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AGBoss01|HitReact", meta = (AllowPrivateAccess))
 	float CurrentBlendWeight = 1.f;

@@ -46,7 +46,7 @@ void UGW_HPBar::NativeConstruct()
 	Super::NativeConstruct();
 
 	AGCharacter* OwningCharacter = Cast<AGCharacter>(OwningActor);
-	if (::IsValid(OwningCharacter) == true)
+	if (IsValid(OwningCharacter) == true)
 	{
 		OwningCharacter->SetWidget(this);
 	}

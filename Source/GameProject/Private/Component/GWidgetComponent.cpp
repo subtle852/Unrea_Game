@@ -13,7 +13,7 @@ void UGWidgetComponent::InitWidget()
 	Super::InitWidget();
 
 	UGWidget* GWidget = Cast<UGWidget>(GetWidget());
-	if (::IsValid(GWidget) == true)
+	if (IsValid(GWidget) == true)
 	{
 		GWidget->SetOwningActor(GetOwner());
 	}

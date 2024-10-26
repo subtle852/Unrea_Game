@@ -13,6 +13,7 @@
  *
  */
 
+class UGAnimInstance;
 class UAnimMontage;
 class UParticleSystemComponent;
 struct FStreamableHandle;
@@ -95,7 +96,7 @@ public:
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	TObjectPtr<class UGAnimInstance> GetLinkedAnimInstance();
+	UGAnimInstance* GetLinkedAnimInstance();
 
 	virtual void Landed(const FHitResult& Hit) override;
 
@@ -587,7 +588,7 @@ protected:
 
 	int32 CurrentComboCount = 0;
 
-	uint8 bIsAttackKeyPressed = false;
+	uint8 bIsAttackKeyPressed : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AGPlayerCharacter|Attack", meta = (AllowPrivateAccess))
 	float BasicAttackRange = 100.f;

@@ -93,7 +93,7 @@ void UUW_LobbyLayout::OnSubmitButtonClicked()
 
 	//UGameplayStatics::OpenLevel(GetWorld(), TEXT("LoadLevel"), true, FString(TEXT("NextLevel=DemoLevel")));
 	AGUIPlayerController* PlayerController = GetOwningPlayer<AGUIPlayerController>();
-	if (::IsValid(PlayerController) == true)
+	if (IsValid(PlayerController) == true)
 	{
 		FText ServerIP = EditServerIP->GetText();
 		PlayerController->JoinServer(ServerIP.ToString());

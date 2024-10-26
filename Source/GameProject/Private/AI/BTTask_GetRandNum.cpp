@@ -48,7 +48,7 @@ EBTNodeResult::Type UBTTask_GetRandNum::ExecuteTask(UBehaviorTreeComponent& Owne
 	else if(NumType == ERandNumType::PatternAttack)
 	{
 		AGBoss01* Boss = Cast<AGBoss01>(Monster);
-		if(::IsValid(Boss))
+		if(IsValid(Boss))
 		{
 			// 모든 값이 1u인지 체크
 			bool bAllSet = true;

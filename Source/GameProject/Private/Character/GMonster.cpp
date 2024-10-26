@@ -137,7 +137,7 @@ float AGMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	if (GetStatComponent()->GetCurrentHP() < KINDA_SMALL_NUMBER)
 	{
 		AGAIController* AIController = Cast<AGAIController>(GetController());
-		if (true == ::IsValid(AIController))
+		if (IsValid(AIController))
 		{
 			AIController->ClearFocus(EAIFocusPriority::Gameplay);
 			AIController->GetBrainComponent()->StopLogic(TEXT("STOP"));
@@ -145,7 +145,7 @@ float AGMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 		}
 
 		AGPlayerCharacter* DamageCauserCharacter = Cast<AGPlayerCharacter>(DamageCauser);
-		if (true == ::IsValid(DamageCauserCharacter))
+		if (IsValid(DamageCauserCharacter))
 		{
 			//DamageCauserCharacter->AddCurrentKillCount(1);
 

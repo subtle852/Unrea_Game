@@ -9,11 +9,11 @@ void AGUIPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (true == ::IsValid(UIWidgetClass))
+    if (IsValid(UIWidgetClass) == true)
     {
         UIWidgetInstance = CreateWidget<UUserWidget>(this, UIWidgetClass); 
         // CreateWidget()이 호출될 때 UIWidgetInstance->NativeOnInitialize() 함수가 호출
-        if (true == ::IsValid(UIWidgetInstance))
+        if (IsValid(UIWidgetInstance) == true)
         {
             UIWidgetInstance->AddToViewport();                             
             // AddToViewport()가 호출 될 때 UIWidgetInstance->NativeConstruct() 함수가 호출

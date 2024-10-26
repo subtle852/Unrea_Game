@@ -20,7 +20,7 @@ void AGGameMode::PostLogin(APlayerController* NewPlayer)
 	Super::PostLogin(NewPlayer);
 
 	AGPlayerState* PlayerState = NewPlayer->GetPlayerState<AGPlayerState>();
-	if (::IsValid(PlayerState) == true)
+	if (IsValid(PlayerState) == true)
 	{
 		PlayerState->InitPlayerState();
 	}

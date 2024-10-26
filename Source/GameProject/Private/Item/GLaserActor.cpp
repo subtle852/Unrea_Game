@@ -139,7 +139,7 @@ void AGLaserActor::Tick(float DeltaTime)
 		
 		if (IsValid(GetOwner()))
 		{
-			TObjectPtr<UGStatComponent> StatComponent = GetOwner()->FindComponentByClass<UGStatComponent>();
+			UGStatComponent* StatComponent = GetOwner()->FindComponentByClass<UGStatComponent>();
 			if (IsValid(StatComponent) && StatComponent->GetCurrentHP() <= 0.0f)
 			{
 				SetLifeSpan(0.5f);

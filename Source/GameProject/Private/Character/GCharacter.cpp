@@ -152,7 +152,7 @@ void AGCharacter::SpawnBloodEffect_NetMulticast_Implementation(const FHitResult&
 	// }
 	
 	UPrimitiveComponent* HitComponent = InHitResult.GetComponent();
-	if (::IsValid(HitComponent))
+	if (IsValid(HitComponent))
 	{
 		UNiagaraComponent* NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
 			BloodNiagaraSystemTemplate,
@@ -164,7 +164,7 @@ void AGCharacter::SpawnBloodEffect_NetMulticast_Implementation(const FHitResult&
 			true// 부모 컴포넌트가 제거되면 함께 제거될지 여부
 		);
 		
-		if (::IsValid(NiagaraComponent))
+		if (IsValid(NiagaraComponent))
 		{
 			ActiveNiagaraComponents.Add(NiagaraComponent);
 			NiagaraComponent->OnSystemFinished.AddDynamic(this, &AGCharacter::OnBloodEffectFinished);

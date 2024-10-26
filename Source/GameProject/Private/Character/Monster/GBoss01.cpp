@@ -244,7 +244,7 @@ float AGBoss01::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 	}
 	
 	// 공중에 있는 경우 ( + 진짜 공중이 아니라 KnockDown or AirBounding)
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	if (IsValid(AnimInstance) == true)
 	{
 		if(AnimInstance->IsFalling() || bIsKnockDowning || bIsAirBounding)
@@ -347,10 +347,10 @@ void AGBoss01::OnCheckHit()
 	{
 		for (const FHitResult& HitResult : HitResults)	
 		{
-			if (::IsValid(HitResult.GetActor()))
+			if (IsValid(HitResult.GetActor()))
 			{
-				TObjectPtr<AGPlayerCharacter> Player = Cast<AGPlayerCharacter>(HitResult.GetActor());
-				if(::IsValid(Player))
+				AGPlayerCharacter* Player = Cast<AGPlayerCharacter>(HitResult.GetActor());
+				if(IsValid(Player))
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -385,10 +385,10 @@ void AGBoss01::OnCheckHit()
 	{
 		for (const FHitResult& CharacterMeshHitResult : CharacterMeshHitResults)
 		{
-			if (::IsValid(CharacterMeshHitResult.GetActor()))
+			if (IsValid(CharacterMeshHitResult.GetActor()))
 			{
-				TObjectPtr<AGPlayerCharacter> Player = Cast<AGPlayerCharacter>(CharacterMeshHitResult.GetActor());
-				if(::IsValid(Player))
+				AGPlayerCharacter* Player = Cast<AGPlayerCharacter>(CharacterMeshHitResult.GetActor());
+				if(IsValid(Player))
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -433,10 +433,10 @@ void AGBoss01::OnCheckHitDown()
 	{
 		for (const FHitResult& HitResult : HitResults)	
 		{
-			if (::IsValid(HitResult.GetActor()))
+			if (IsValid(HitResult.GetActor()))
 			{
-				TObjectPtr<AGPlayerCharacter> Player = Cast<AGPlayerCharacter>(HitResult.GetActor());
-				if(::IsValid(Player))
+				AGPlayerCharacter* Player = Cast<AGPlayerCharacter>(HitResult.GetActor());
+				if(IsValid(Player))
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -471,10 +471,10 @@ void AGBoss01::OnCheckHitDown()
 	{
 		for (const FHitResult& CharacterMeshHitResult : CharacterMeshHitResults)
 		{
-			if (::IsValid(CharacterMeshHitResult.GetActor()))
+			if (IsValid(CharacterMeshHitResult.GetActor()))
 			{
-				TObjectPtr<AGPlayerCharacter> Player = Cast<AGPlayerCharacter>(CharacterMeshHitResult.GetActor());
-				if(::IsValid(Player))
+				AGPlayerCharacter* Player = Cast<AGPlayerCharacter>(CharacterMeshHitResult.GetActor());
+				if(IsValid(Player))
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -525,7 +525,7 @@ void AGBoss01::PlayBasicAttackAnimMontage_NetMulticast_Implementation(uint16 InR
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
-	TObjectPtr<class UAnimMontage> AttackRandMontage = nullptr;
+	UAnimMontage* AttackRandMontage = nullptr;
 	
 	switch (InRandNum)
 	{
@@ -665,7 +665,7 @@ void AGBoss01::PlayJumpAttackAnimMontage_NetMulticast_Implementation()
 
 void AGBoss01::PlayLastSectionJumpAttackAnimMontage_NetMulticast_Implementation()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	//UKismetSystemLibrary::PrintString(this, TEXT("PlayLastSectionJumpAttackAnimMontage_NetMulticast is called"));
@@ -1835,7 +1835,7 @@ void AGBoss01::PlayStunHitReactAnimMontage_NetMulticast_Implementation()
 	AnimInstance->StopAllMontages(0.0f);
 	AnimInstance->PlayAnimMontage(StunHitReactMontage);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactStunAnimMontage_NetMulticast is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactStunAnimMontage_NetMulticast is called by NetMulticast"));
 
 	bIsStunning = true;
 	if(bIsHitReactTransitioning == true)
@@ -1851,6 +1851,8 @@ void AGBoss01::PlayStunHitReactAnimMontage_NetMulticast_Implementation()
 		AGAIController* AIController = Cast<AGAIController>(GetController());
 		if(AIController != nullptr)
 		{
+			AIController->StopMovement();
+			AIController->SetFocus(AIController->TargetActor);
 			AIController->ClearFocus(EAIFocusPriority::Gameplay);
 			//AIController->GetBrainComponent()->StopLogic(TEXT("PAUSE"));
 		}
@@ -1868,7 +1870,7 @@ void AGBoss01::EndStunHitReact(UAnimMontage* InMontage, bool bInterrupted)
 	if(GetStatComponent()->GetCurrentHP() < KINDA_SMALL_NUMBER)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactStun is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactStun is called"));
 
 	if(bInterrupted)
 	{
@@ -1905,7 +1907,7 @@ void AGBoss01::PlayKnockDownHitReactAnimMontage_NetMulticast_Implementation()
 	AnimInstance->StopAllMontages(0.0f); 
 	AnimInstance->PlayAnimMontage(KnockDownHitReactMontage);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactKnockDownAnimMontage_NetMulticast is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactKnockDownAnimMontage_NetMulticast is called by NetMulticast"));
 
 	bIsKnockDowning = true;
 	if(bIsHitReactTransitioning == true)
@@ -1937,7 +1939,7 @@ void AGBoss01::EndKnockDownHitReact(UAnimMontage* InMontage, bool bInterrupted)
 	if(GetStatComponent()->GetCurrentHP() < KINDA_SMALL_NUMBER)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactKnockDown is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactKnockDown is called"));
 
 	if(bInterrupted)
 	{
@@ -1974,7 +1976,7 @@ void AGBoss01::PlayAirBoundHitReactAnimMontage_NetMulticast_Implementation()
 	AnimInstance->StopAllMontages(0.0f);
 	AnimInstance->PlayAnimMontage(AirBoundHitReactMontage);
 
-	UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactAirBound is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactAirBound is called"));
 	
 	bIsAirBounding = true;
 	if(bIsHitReactTransitioning == true)
@@ -2006,7 +2008,7 @@ void AGBoss01::EndAirBoundHitReact(UAnimMontage* InMontage, bool bInterrupted)
 	if(GetStatComponent()->GetCurrentHP() < KINDA_SMALL_NUMBER)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactAirBound is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactAirBound is called"));
 
 	if(bInterrupted)
 	{
@@ -2045,7 +2047,7 @@ void AGBoss01::PlayGroundBoundHitReactAnimMontage_NetMulticast_Implementation()
 	AnimInstance->StopAllMontages(0.0f);
 	AnimInstance->PlayAnimMontage(GroundBoundHitReactMontage);
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactGroundBoundAnimMontage is called by NetMulticast"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("PlayHitReactGroundBoundAnimMontage is called by NetMulticast"));
 
 	bIsGroundBounding = true;
 	if(bIsHitReactTransitioning == true)
@@ -2077,7 +2079,7 @@ void AGBoss01::EndGroundBoundHitReact(UAnimMontage* InMontage, bool bInterrupted
 	if(GetStatComponent()->GetCurrentHP() < KINDA_SMALL_NUMBER)
 		return;
 	
-	UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactGroundBound is called"));
+	//UKismetSystemLibrary::PrintString(this, TEXT("EndHitReactGroundBound is called"));
 
 	if(bInterrupted)
 	{

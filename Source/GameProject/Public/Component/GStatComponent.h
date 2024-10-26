@@ -103,7 +103,7 @@ private:
 	float CurrentHP;
 
 	UPROPERTY(Replicated, Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "UGStatComponent", meta = (AllowPrivateAccess))
-	uint8 bIsInvincible;
+	uint8 bIsInvincible : 1;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "UGStatComponent", meta = (AllowPrivateAccess))
 	float MaxSP;

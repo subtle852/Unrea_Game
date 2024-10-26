@@ -42,10 +42,10 @@ void UGStatComponent::BeginPlay()
 	float NewMaxHP = 100.f;
 
 	GameInstance = Cast<UGGameInstance>(GetWorld()->GetGameInstance());
-	if (::IsValid(GameInstance) == true)
+	if (IsValid(GameInstance) == true)
 	{
 		AGCharacter* Character = Cast<AGCharacter>(GetOwner());
-		if (::IsValid(Character))
+		if (IsValid(Character))
 		{
 			if (Character->IsA(AGPlayerCharacter::StaticClass()))
 			{

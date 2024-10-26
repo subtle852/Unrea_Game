@@ -29,8 +29,8 @@ protected:
 
 private:
 	UPROPERTY()
-	UBehaviorTreeComponent* CachedOwnerComp;
+	TObjectPtr<UBehaviorTreeComponent> CachedOwnerComp;
 
 	UPROPERTY()
-	class AGAIController* CachedAIController;
+	TObjectPtr<class AGAIController> CachedAIController;
 };

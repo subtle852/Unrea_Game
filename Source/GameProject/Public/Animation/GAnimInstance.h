@@ -104,21 +104,21 @@ public:
 
 	void PlayAnimMontage(UAnimMontage* InAnimMontage);
 
-	TObjectPtr<UAnimMontage> GetJumpFlipAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetGlidingStartAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetDashAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetBasicAttackAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetChargedAttackAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetAirAttackAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetRunAttackAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetCrouchAttackAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetSkillFirstAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetSkillSecondAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetStunHitReactAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetKnockDownHitReactAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetAirBoundHitReactAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetGroundBoundHitReactAnimMontage() const;
-	TObjectPtr<UAnimMontage> GetLyingHitReactAnimMontage() const;
+	UAnimMontage* GetJumpFlipAnimMontage() const;
+	UAnimMontage* GetGlidingStartAnimMontage() const;
+	UAnimMontage* GetDashAnimMontage() const;
+	UAnimMontage* GetBasicAttackAnimMontage() const;
+	UAnimMontage* GetChargedAttackAnimMontage() const;
+	UAnimMontage* GetAirAttackAnimMontage() const;
+	UAnimMontage* GetRunAttackAnimMontage() const;
+	UAnimMontage* GetCrouchAttackAnimMontage() const;
+	UAnimMontage* GetSkillFirstAnimMontage() const;
+	UAnimMontage* GetSkillSecondAnimMontage() const;
+	UAnimMontage* GetStunHitReactAnimMontage() const;
+	UAnimMontage* GetKnockDownHitReactAnimMontage() const;
+	UAnimMontage* GetAirBoundHitReactAnimMontage() const;
+	UAnimMontage* GetGroundBoundHitReactAnimMontage() const;
+	UAnimMontage* GetLyingHitReactAnimMontage() const;
 
 	void InitializeMainAnimInstance(UGAnimInstance* InMainAnimInstance) { MainAnimInstance = InMainAnimInstance; }
 
@@ -135,7 +135,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAnimInstance", meta = (AllowPrivateAccess))
-	UGAnimInstance* MainAnimInstance;
+	TObjectPtr<UGAnimInstance> MainAnimInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GAnimInstance", meta = (AllowPrivateAccess))
 	FVector Velocity;

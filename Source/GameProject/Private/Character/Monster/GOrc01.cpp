@@ -146,7 +146,7 @@ float AGOrc01::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 
 		// BT 종료
 		AGAIController* AIController = Cast<AGAIController>(GetController());
-		if (::IsValid(AIController))
+		if (IsValid(AIController))
 		{
 			AIController->StopMovement();
 			
@@ -174,15 +174,16 @@ float AGOrc01::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 	}
 	
 	// 공중에 있는 경우 ( + 진짜 공중이 아니라 KnockDown or AirBounding)
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	if (IsValid(AnimInstance) == true)
 	{
 		if(AnimInstance->IsFalling() || bIsKnockDowning || bIsAirBounding)
 		{
 			// BT 종료
 			AGAIController* AIController = Cast<AGAIController>(GetController());
-			if (::IsValid(AIController))
+			if (IsValid(AIController))
 			{
+				AIController->StopMovement();
 				AIController->EndAI();
 				AIController->ClearFocus(EAIFocusPriority::Gameplay);
 			}
@@ -201,8 +202,9 @@ float AGOrc01::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 		{
 			// BT 종료
 			AGAIController* AIController = Cast<AGAIController>(GetController());
-			if (::IsValid(AIController))
+			if (IsValid(AIController))
 			{
+				AIController->StopMovement();
 				AIController->EndAI();
 				AIController->ClearFocus(EAIFocusPriority::Gameplay);
 			}
@@ -224,8 +226,9 @@ float AGOrc01::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, A
 			if (AttackDamageEvent && AttackDamageEvent->AttackType == EAttackType::Special)
 			{
 				AGAIController* AIController = Cast<AGAIController>(GetController());
-				if (::IsValid(AIController))
+				if (IsValid(AIController))
 				{
+					AIController->StopMovement();
 					AIController->EndAI();
 					AIController->ClearFocus(EAIFocusPriority::Gameplay);
 				}
@@ -323,10 +326,10 @@ void AGOrc01::OnCheckHit()
 	{
 		for (const FHitResult& HitResult : HitResults)
 		{
-			if (::IsValid(HitResult.GetActor()))
+			if (IsValid(HitResult.GetActor()))
 			{
-				TObjectPtr<AGPlayerCharacter> Player = Cast<AGPlayerCharacter>(HitResult.GetActor());
-				if(::IsValid(Player))
+				AGPlayerCharacter* Player = Cast<AGPlayerCharacter>(HitResult.GetActor());
+				if(IsValid(Player))
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -359,10 +362,10 @@ void AGOrc01::OnCheckHit()
 	{
 		for (const FHitResult& CharacterMeshHitResult : CharacterMeshHitResults)
 		{
-			if (::IsValid(CharacterMeshHitResult.GetActor()))
+			if (IsValid(CharacterMeshHitResult.GetActor()))
 			{
-				TObjectPtr<AGPlayerCharacter> Player = Cast<AGPlayerCharacter>(CharacterMeshHitResult.GetActor());
-				if(::IsValid(Player))
+				AGPlayerCharacter* Player = Cast<AGPlayerCharacter>(CharacterMeshHitResult.GetActor());
+				if(IsValid(Player))
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -401,7 +404,7 @@ void AGOrc01::PlayBasicAttackAnimMontage_NetMulticast_Implementation(int32 InAtt
 	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	
-	TObjectPtr<class UAnimMontage> AttackRandMontage = nullptr;
+	UAnimMontage* AttackRandMontage = nullptr;
 	switch (InAttackRandNum)
 	{
 	case 1:
@@ -558,7 +561,7 @@ void AGOrc01::EndStunHitReact(UAnimMontage* InMontage, bool bInterrupted)
 	//GetCharacterMovement()->MaxWalkSpeed = 150.0f;
 
 	AGAIController* AIController = Cast<AGAIController>(GetController());
-	if (::IsValid(AIController))
+	if (IsValid(AIController))
 	{
 		if(!bIsLying && !bIsStunning && !bIsKnockDowning && !bIsAirBounding && !bIsGroundBounding)
 		{
@@ -623,7 +626,7 @@ void AGOrc01::EndKnockDownHitReact(UAnimMontage* InMontage, bool bInterrupted)
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 
 	AGAIController* AIController = Cast<AGAIController>(GetController());
-	if (::IsValid(AIController))
+	if (IsValid(AIController))
 	{
 		if(!bIsLying && !bIsStunning && !bIsKnockDowning && !bIsAirBounding && !bIsGroundBounding)
 		{
@@ -688,7 +691,7 @@ void AGOrc01::EndAirBoundHitReact(UAnimMontage* InMontage, bool bInterrupted)
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 
 	AGAIController* AIController = Cast<AGAIController>(GetController());
-	if (::IsValid(AIController))
+	if (IsValid(AIController))
 	{
 		if(!bIsLying && !bIsStunning && !bIsKnockDowning && !bIsAirBounding && !bIsGroundBounding)
 		{
@@ -756,7 +759,7 @@ void AGOrc01::EndGroundBoundHitReact(UAnimMontage* InMontage, bool bInterrupted)
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 
 	AGAIController* AIController = Cast<AGAIController>(GetController());
-	if (::IsValid(AIController))
+	if (IsValid(AIController))
 	{
 		if(!bIsLying && !bIsStunning && !bIsKnockDowning && !bIsAirBounding && !bIsGroundBounding)
 		{
@@ -870,10 +873,10 @@ void AGOrc01::ForceCall_EndMontageFunction(const uint8* InArr)
 void AGOrc01::AdjustRotationToTarget()
 {
 	AGAIController* AIController = Cast<AGAIController>(GetController());
-	if (::IsValid(AIController))
+	if (IsValid(AIController))
 	{
 		AGCharacter* TargetActor = Cast<AGCharacter>(AIController->GetBlackboardComponent()->GetValueAsObject(AGAIController::TargetActorKey));
-		if(::IsValid(TargetActor))
+		if(IsValid(TargetActor))
 		{
 			FVector CurrentLocation = GetActorLocation();
 			FVector TargetLocation = TargetActor->GetActorLocation();

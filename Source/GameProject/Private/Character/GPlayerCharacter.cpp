@@ -193,7 +193,7 @@ void AGPlayerCharacter::BeginPlay()
 		}
 	}
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	//AnimInstance->OnMontageEnded.AddDynamic(this, &ThisClass::OnMontageEnded);
 	//AnimInstance->OnCheckHit.AddDynamic(this, &ThisClass::OnCheckHit);// AnimInstance Delegate가 아닌 직접 만든 노티파이 이용
@@ -277,7 +277,7 @@ void AGPlayerCharacter::BeginPlay()
 		{
 			auto SPIncreaselambda = [this]()
 			{
-				if (::IsValid(GetStatComponent()) && GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
+				if (IsValid(GetStatComponent()) && GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 				{
 					if (GetStatComponent()->GetCurrentSP() < GetStatComponent()->GetMaxSP())
 					{
@@ -295,7 +295,7 @@ void AGPlayerCharacter::BeginPlay()
 		{
 			auto SkillTimeIncreaselambda = [this]()
 			{
-				if (::IsValid(GetStatComponent()) && GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
+				if (IsValid(GetStatComponent()) && GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 				{
 					if (GetStatComponent()->GetCurrentSkillFirstTime() < GetStatComponent()->GetMaxSkillFirstTime())
 					{
@@ -665,7 +665,7 @@ float AGPlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	}
 	
 	// 공중에 있는 경우 ( + 진짜 공중이 아니라 KnockDown or AirBounding)
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	if (IsValid(AnimInstance) == true)
 	{
 		if(AnimInstance->IsFalling() || bIsKnockDowning || bIsAirBounding)
@@ -873,10 +873,10 @@ void AGPlayerCharacter::OnCheckHit()
 	{
 		for (const FHitResult& HitResult : HitResults)
 		{
-			if (::IsValid(HitResult.GetActor()))
+			if (IsValid(HitResult.GetActor()))
 			{
-				TObjectPtr<AGMonster> Monster = Cast<AGMonster>(HitResult.GetActor());
-				if(::IsValid(Monster))
+				AGMonster* Monster = Cast<AGMonster>(HitResult.GetActor());
+				if(IsValid(Monster))
 				{
 					if(Monster->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -922,7 +922,7 @@ void AGPlayerCharacter::OnCheckHit()
 	// {
 	// 	for (const FHitResult& CharacterMeshHitResult : CharacterMeshHitResults)
 	// 	{
-	// 		if (::IsValid(CharacterMeshHitResult.GetActor()))
+	// 		if (IsValid(CharacterMeshHitResult.GetActor()))
 	// 		{
 	// 			UKismetSystemLibrary::PrintString(
 	// 				this, FString::Printf(TEXT("SpawnBloodEffect_Server is will be called~~~~~~~~~~~~~~~~~")));
@@ -957,10 +957,10 @@ void AGPlayerCharacter::OnCheckHitDown()
 	{
 		for (const FHitResult& HitResult : HitResults)
 		{
-			if (::IsValid(HitResult.GetActor()))
+			if (IsValid(HitResult.GetActor()))
 			{
-				TObjectPtr<AGMonster> Monster = Cast<AGMonster>(HitResult.GetActor());
-				if(::IsValid(Monster))
+				AGMonster* Monster = Cast<AGMonster>(HitResult.GetActor());
+				if(IsValid(Monster))
 				{
 					if(Monster->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -1006,7 +1006,7 @@ void AGPlayerCharacter::OnCheckHitDown()
 	// {
 	// 	for (const FHitResult& CharacterMeshHitResult : CharacterMeshHitResults)
 	// 	{
-	// 		if (::IsValid(CharacterMeshHitResult.GetActor()))
+	// 		if (IsValid(CharacterMeshHitResult.GetActor()))
 	// 		{
 	// 			UKismetSystemLibrary::PrintString(
 	// 				this, FString::Printf(TEXT("Hit Actor Name: %s"), *CharacterMeshHitResult.GetActor()->GetName()));
@@ -1024,12 +1024,12 @@ void AGPlayerCharacter::OnCheckAttackInput()
 
 	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnCheckAttackInput is called")));
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
+	UAnimMontage* BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
 	ensureMsgf(IsValid(BasicAttackAnimMontage), TEXT("Invalid BasicAttackAnimMontage"));
 
 	// 구버전 Charged Attack
@@ -1095,7 +1095,7 @@ void AGPlayerCharacter::OnCheckUpdateRotation()
 			for (auto const& OverlapResult : OverlapResults)
 			{
 				AGMonster* OverlappedMonster = Cast<AGMonster>(OverlapResult.GetActor());
-				if (::IsValid(OverlappedMonster))
+				if (IsValid(OverlappedMonster))
 				{
 					if(OverlappedMonster->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -1174,47 +1174,66 @@ void AGPlayerCharacter::OnCheckUpdateCanMove(bool InCanMove)
 			);
 
 			bool bTempResult = false;
-
+			AGMonster* TargetMonster = nullptr;
+			float MinDistance = FLT_MAX;
+			
 			if (bResult == true)
 			{
 				for (auto const& OverlapResult : OverlapResults)
 				{
-					// 가장 먼저 들어오는 OverlapResults에만 발사하기 위한 조건
-					if(bTempResult == true)
-						break;
-			
-					if (IsValid(Cast<AGMonster>(OverlapResult.GetActor())))
+					AGMonster* OverlappedMonster = Cast<AGMonster>(OverlapResult.GetActor());
+					if (IsValid(OverlappedMonster))
 					{
-						AGMonster* Monster = Cast<AGMonster>(OverlapResult.GetActor());
-						bTempResult = true;
-						//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Detected!")));
+						if(OverlappedMonster->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
+						{
+							bTempResult = true;
 
-						// 오버랩 충돌 O 드로우 디버깅
-						//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
-						//DrawDebugPoint(GetWorld(), Monster->GetActorLocation(), 10.f, FColor::Red, false, 0.5f);
-						//DrawDebugLine(GetWorld(), this->GetActorLocation(), Monster->GetActorLocation(), FColor::Red,
-									  //false,
-									  //0.5f, 0u, 1.f);
+							float Distance = FVector::Dist(CenterPosition, OverlappedMonster->GetActorLocation());
 
-						// 몬스터 방향 쳐다보도록 회전
-						// 해당 부분은 UpdateRotation 애님노티파이에서도 해주고 여기서도 해주는 중
-						FVector Direction = Monster->GetActorLocation() - this->GetActorLocation();
-						Direction.Normalize(); 
-						this->SetActorRotation(Direction.Rotation());
-						UpdateRotation_Server(Direction.Rotation());
+							if (Distance < MinDistance)
+							{
+								MinDistance = Distance;
+								TargetMonster = OverlappedMonster;
+							}
+							//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Detected!")));
 
-						bCanMoveInAttacking = false;
+							// 오버랩 충돌 O 드로우 디버깅
+							//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Red, false, 0.5f);
+							//DrawDebugPoint(GetWorld(), Monster->GetActorLocation(), 10.f, FColor::Red, false, 0.5f);
+							//DrawDebugLine(GetWorld(), this->GetActorLocation(), Monster->GetActorLocation(), FColor::Red,
+							//false,
+							//0.5f, 0u, 1.f);
+						}
 					}
 				}
 			}
 
-			// 오버랩 충돌 없는 경우는 InputDirectionVector로 발사
-			if(bTempResult == false)
+			if(bTempResult == true)
 			{
+				// 근처에 몬스터가 있는 경우에는 업데이트 로테이션 안하고
+				// 몬스터 방향 쳐다보도록 회전
+				// 해당 부분은 UpdateRotation 애님노티파이에서도 해주고 여기서도 해주는 중
+				FVector Direction = TargetMonster->GetActorLocation() - this->GetActorLocation();
+				Direction.Normalize(); 
+				this->SetActorRotation(Direction.Rotation());
+				UpdateRotation_Server(Direction.Rotation());
+
+				bCanMoveInAttacking = false;
+			}
+			else// 오버랩 충돌 없는 경우는 InputDirectionVector로 발사
+			{
+				bCanMoveInAttacking = InCanMove;
+
 				// 오버랩 충돌 X 드로우디버깅
 				//DrawDebugSphere(GetWorld(), CenterPosition, DetectRadius, 16, FColor::Green, false, 0.5f);
-
-				bCanMoveInAttacking = InCanMove;
+				
+				// if (InputDirectionVector.IsNearlyZero() == false)
+				// {
+				// 	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnUpdateRotation() has been called on Second")));
+				// 	FRotator InputRotation = InputDirectionVector.Rotation();
+				// 	this->SetActorRotation(InputRotation);
+				// 	UpdateRotation_Server(InputRotation);
+				// }
 			}
 		}
 	}
@@ -1257,7 +1276,7 @@ void AGPlayerCharacter::OnShootArrow()
 				// 	break;
 
 				AGMonster* OverlappedMonster = Cast<AGMonster>(OverlapResult.GetActor());
-				if (::IsValid(OverlappedMonster))
+				if (IsValid(OverlappedMonster))
 				{
 					if(OverlappedMonster->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -1467,9 +1486,9 @@ void AGPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	}
 }
 
-TObjectPtr<UGAnimInstance> AGPlayerCharacter::GetLinkedAnimInstance()
+UGAnimInstance* AGPlayerCharacter::GetLinkedAnimInstance()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// UGAnimInstance* CurrentLinkedAnimInstance = nullptr;
@@ -1522,7 +1541,7 @@ void AGPlayerCharacter::Landed(const FHitResult& Hit)
 	// Owner 공통
 	if(IsLocallyControlled() == true)
 	{
-		TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+		UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 		ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 		// 지금 대쉬하고도 여기 들어오고 있음
@@ -1573,6 +1592,8 @@ void AGPlayerCharacter::Landed(const FHitResult& Hit)
 void AGPlayerCharacter::InputChangeAnimMoveType(const FInputActionValue& InValue)
 {
 	ForDebug_IncreaseHP_Server();
+
+	GetStatComponent()->SetCurrentSP(GetStatComponent()->GetCurrentSP() + 50.f);
 	
 	// TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	// ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
@@ -1664,7 +1685,7 @@ void AGPlayerCharacter::InputMove(const FInputActionValue& InValue)
 
 				if(bIsChargedAttacking == true)
 				{
-					TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+					UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 					if(IsValid(AnimInstance) == true)
 					{
 						if(AnimInstance->GetWeaponType() == EWeaponType::None)
@@ -1692,7 +1713,7 @@ void AGPlayerCharacter::InputMove(const FInputActionValue& InValue)
 
 				if(bIsSkillFirstAttacking == true)
 				{
-					TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+					UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 					if(IsValid(AnimInstance) == true)
 					{
 						if(AnimInstance->GetWeaponType() == EWeaponType::None)
@@ -1720,7 +1741,7 @@ void AGPlayerCharacter::InputMove(const FInputActionValue& InValue)
 				
 				if(bIsSkillSecondAttacking == true)
 				{
-					TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+					UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 					if(IsValid(AnimInstance) == true)
 					{
 						if(AnimInstance->GetWeaponType() == EWeaponType::None)
@@ -1761,7 +1782,7 @@ void AGPlayerCharacter::InputMove(const FInputActionValue& InValue)
 					{
 						//UKismetSystemLibrary::PrintString(this, TEXT("ViewMode is changed to UnLock"));
 						
-						TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+						UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 						ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 					
 						AnimInstance->SetAnimMoveType(EAnimMoveType::UnLock);
@@ -1857,7 +1878,7 @@ void AGPlayerCharacter::InputLook(const FInputActionValue& InValue)
 				AddControllerYawInput(LookVector.X);
 				AddControllerPitchInput(LookVector.Y);
 				
-				TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+				UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 				if(IsValid(AnimInstance) == true && AnimInstance->GetAimOffsetAlpha() != 0.0f)
 				{
 					FRotator NewControlRotation = GetController()->GetControlRotation();
@@ -1959,7 +1980,7 @@ void AGPlayerCharacter::InputEquip(const FInputActionValue& InValue)
 		return;
 	}
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	if (AnimInstance->GetWeaponType() == EWeaponType::GreatSword)
 	{
@@ -1970,7 +1991,7 @@ void AGPlayerCharacter::InputEquip(const FInputActionValue& InValue)
 	// WeaponInstance는 아직 없기에, WeaponClass DefaultObject 활용
 	if (IsValid((WeaponClass)) == true)
 	{
-		if (TObjectPtr<AGWeaponActor> DefaultWeapon = WeaponClass->GetDefaultObject<AGWeaponActor>())
+		if (AGWeaponActor* DefaultWeapon = WeaponClass->GetDefaultObject<AGWeaponActor>())
 		{
 			//AnimInstance->PlayAnimMontage(DefaultWeapon->GetEquipAnimMontage());
 		}
@@ -1986,7 +2007,7 @@ void AGPlayerCharacter::InputEquip(const FInputActionValue& InValue)
 	AnimInstance->SetWeaponType(EWeaponType::GreatSword);
 	
 	AGPlayerState* GPlayerState = GetPlayerState<AGPlayerState>();
-	if (::IsValid(GPlayerState) == true)
+	if (IsValid(GPlayerState) == true)
 	{
 		GPlayerState->SetWeaponType(1);
 	}
@@ -2000,7 +2021,7 @@ void AGPlayerCharacter::InputEquip2(const FInputActionValue& InValue)
 		return;
 	}
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	if (AnimInstance->GetWeaponType() == EWeaponType::Bow)
 	{
@@ -2011,7 +2032,7 @@ void AGPlayerCharacter::InputEquip2(const FInputActionValue& InValue)
 	// WeaponInstance는 아직 없기에, WeaponClass DefaultObject 활용
 	if (IsValid((WeaponClass2)) == true)
 	{
-		if (TObjectPtr<AGWeaponActor> DefaultWeapon = WeaponClass2->GetDefaultObject<AGWeaponActor>())
+		if (AGWeaponActor* DefaultWeapon = WeaponClass2->GetDefaultObject<AGWeaponActor>())
 		{
 			//AnimInstance->PlayAnimMontage(DefaultWeapon->GetEquipAnimMontage());
 		}
@@ -2030,7 +2051,7 @@ void AGPlayerCharacter::InputEquip2(const FInputActionValue& InValue)
 	AGPlayerState* CurrentPlayerState = Cast<AGPlayerState>(PlayerController->GetPlayerState<AGPlayerState>());
 
 	AGPlayerState* GPlayerState = GetPlayerState<AGPlayerState>();
-	if (::IsValid(GPlayerState) == true)
+	if (IsValid(GPlayerState) == true)
 	{
 		GPlayerState->SetWeaponType(2);
 	}
@@ -2043,7 +2064,7 @@ void AGPlayerCharacter::InputUnEquip(const FInputActionValue& InValue)
 		return;
 	}
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	if (AnimInstance->GetWeaponType() == EWeaponType::None)
 	{
@@ -2053,7 +2074,7 @@ void AGPlayerCharacter::InputUnEquip(const FInputActionValue& InValue)
 	// 선 애니메이션 재생
 	if (IsValid((WeaponClass)) == true)
 	{
-		if (TObjectPtr<AGWeaponActor> DefaultWeapon = WeaponClass->GetDefaultObject<AGWeaponActor>())
+		if (AGWeaponActor* DefaultWeapon = WeaponClass->GetDefaultObject<AGWeaponActor>())
 		{
 			//AnimInstance->PlayAnimMontage(DefaultWeapon->GetUnequipAnimMontage());
 		}
@@ -2067,7 +2088,7 @@ void AGPlayerCharacter::InputUnEquip(const FInputActionValue& InValue)
 	AGPlayerState* CurrentPlayerState = Cast<AGPlayerState>(PlayerController->GetPlayerState<AGPlayerState>());
 
 	AGPlayerState* GPlayerState = GetPlayerState<AGPlayerState>();
-	if (::IsValid(GPlayerState) == true)
+	if (IsValid(GPlayerState) == true)
 	{
 		GPlayerState->SetWeaponType(0);
 	}
@@ -2080,7 +2101,7 @@ void AGPlayerCharacter::InputRunStart(const FInputActionValue& InValue)
 		if (StatComponent->GetCurrentHP() <= KINDA_SMALL_NUMBER)
 			break;
 
-		TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+		UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 		if (IsValid(AnimInstance) == false)
 			break;
 
@@ -2104,7 +2125,7 @@ void AGPlayerCharacter::InputRunEnd(const FInputActionValue& InValue)
 	if (bIsRun == false)
 		return;
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	if (IsValid(AnimInstance) == false)
 		return;
 
@@ -2129,7 +2150,7 @@ void AGPlayerCharacter::InputDash(const FInputActionValue& InValue)
 	if (StatComponent->GetCurrentHP() <= KINDA_SMALL_NUMBER)
 		return;
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	if (AnimInstance->IsFalling())
 		return;
@@ -2166,7 +2187,7 @@ void AGPlayerCharacter::InputAttack(const FInputActionValue& InValue)
 	if(bIsStunning || bIsKnockDowning || bIsAirBounding || bIsGroundBounding || bIsLying)
 		return;
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// AirAttack
@@ -2249,7 +2270,7 @@ void AGPlayerCharacter::InputAttack(const FInputActionValue& InValue)
 	// BasicAttack OR ChargedAttack
 	if(CurrentComboCount == 0)// || CurrentComboCount == 3)
 	{
-		if(AnimInstance->GetWeaponType() != EWeaponType::Bow)
+		//if(AnimInstance->GetWeaponType() != EWeaponType::Bow)
 		{
 			// [일반적인 경우]
 			// 일반 공격 선 실행 후
@@ -2258,7 +2279,7 @@ void AGPlayerCharacter::InputAttack(const FInputActionValue& InValue)
 				BeginBasicAttackCombo();// 일단 BasicAttack 실행
 			
 		}
-		else
+		//else// 화살도 동일하게 처리하도록 수정
 		{
 			// [화살 무기의 경우]
 			// 선 실행하는 것 없이
@@ -2274,17 +2295,17 @@ void AGPlayerCharacter::InputAttack(const FInputActionValue& InValue)
      	{
      		if(bIsCharging == false)// BasicAttack
      		{
-     			if(AnimInstance->GetWeaponType() != EWeaponType::Bow)
+     			//if(AnimInstance->GetWeaponType() != EWeaponType::Bow)
      			{
      				// [일반적인 경우]
      				bChargedAttackDetermined = false;
      			}
-		        else
-		        {
-		        	// [화살 무기의 경우]
-		        	bChargedAttackDetermined = false;
-		        	BeginBasicAttackCombo();
-		        }
+		        // else// 화살도 동일하게 처리하도록 수정
+		        // {
+		        // 	// [화살 무기의 경우]
+		        // 	bChargedAttackDetermined = false;
+		        // 	BeginBasicAttackCombo();
+		        // }
      		}
      		else// ChargedAttack
      		// Charging 중이면, BasicAttack 멈추고 ChargedAttack 실행
@@ -2318,7 +2339,7 @@ void AGPlayerCharacter::InputAttackEnd(const FInputActionValue& InValue)
 {
 	bIsCharging = false;
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	if(AnimInstance->GetWeaponType() == EWeaponType::Bow)
 	{
@@ -2406,7 +2427,7 @@ void AGPlayerCharacter::InputSkillSecond(const FInputActionValue& InValue)
 void AGPlayerCharacter::InputESCMenu(const FInputActionValue& InValue)
 {
 	AGPlayerController* PlayerController = GetController<AGPlayerController>();
-	if (::IsValid(PlayerController) == true)
+	if (IsValid(PlayerController) == true)
 	{
 		PlayerController->ToggleInGameESCMenu();
 	}
@@ -2445,7 +2466,7 @@ void AGPlayerCharacter::UpdateRotation_NetMulticast_Implementation(FRotator NewR
 
 void AGPlayerCharacter::UpdateAnimMoveType_Server_Implementation(EAnimMoveType NewAnimMoveType)
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	
 	AnimInstance->SetAnimMoveType(NewAnimMoveType);
@@ -2458,7 +2479,7 @@ void AGPlayerCharacter::UpdateAnimMoveType_NetMulticast_Implementation(EAnimMove
 	if (HasAuthority() == true || IsLocallyControlled() == true)
 		return;
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	
 	AnimInstance->SetAnimMoveType(NewAnimMoveType);
@@ -2499,7 +2520,7 @@ void AGPlayerCharacter::JumpStart_Owner()
 {
 	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("CurJumpCount: %d in OwningClient"), CurJumpCount));
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// // 점프 시작하면, Lock으로 전환
@@ -2517,8 +2538,8 @@ void AGPlayerCharacter::JumpStart_Owner()
 		else if (CurJumpCount == 1) // 2단 점프 예측
 		{
 			// LinkedAnimInstance의 AnimMontage 가져오기
-			TObjectPtr<UGAnimInstance> CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-			TObjectPtr<UAnimMontage> JumpFlipAnimMontage = CurrentLinkedAnimInstance->GetJumpFlipAnimMontage();
+			UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
+			UAnimMontage* JumpFlipAnimMontage = CurrentLinkedAnimInstance->GetJumpFlipAnimMontage();
 			ensureMsgf(IsValid(JumpFlipAnimMontage), TEXT("Invalid JumpFlipAnimMontage"));
 
 			AnimInstance->PlayAnimMontage(JumpFlipAnimMontage);
@@ -2537,8 +2558,8 @@ void AGPlayerCharacter::JumpStart_Owner()
 			GetCharacterMovement()->AirControl = GliderAirControl;
 			
 			// LinkedAnimInstance의 AnimMontage 가져오기
-			TObjectPtr<UGAnimInstance> CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-			TObjectPtr<UAnimMontage> GlidingStartAnimMontage = CurrentLinkedAnimInstance->GetGlidingStartAnimMontage();
+			UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
+			UAnimMontage* GlidingStartAnimMontage = CurrentLinkedAnimInstance->GetGlidingStartAnimMontage();
 			ensureMsgf(IsValid(GlidingStartAnimMontage), TEXT("Invalid GlidingStartAnimMontage"));
 		
 			AnimInstance->PlayAnimMontage(GlidingStartAnimMontage);
@@ -2626,13 +2647,13 @@ void AGPlayerCharacter::JumpStart_NetMulticast_Implementation(int32 InCurJumpCou
 	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("JumpStart() has been called in NetMulticast.")));
 	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("CurJumpCount: %d in OtherClient"), CurJumpCount));
 	
-	if (TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance()))
+	if (UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		if (CurJumpCount == 2)// 2단 점프
 		{
 			// LinkedAnimInstance의 AnimMontage 가져오기
-			TObjectPtr<UGAnimInstance> CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-			TObjectPtr<UAnimMontage> JumpFlipAnimMontage = CurrentLinkedAnimInstance->GetJumpFlipAnimMontage();
+			UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
+			UAnimMontage* JumpFlipAnimMontage = CurrentLinkedAnimInstance->GetJumpFlipAnimMontage();
 
 			AnimInstance->PlayAnimMontage(JumpFlipAnimMontage);
 		}
@@ -2674,7 +2695,7 @@ void AGPlayerCharacter::JumpEnd_Owner()// Deprecated
 	//		UKismetMathLibrary::MakeVector(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->Velocity.Y, 0.0f);
 	//}
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	
 	// 글라이딩 중이라면, 글라이더 장착 해제
@@ -2708,7 +2729,7 @@ void AGPlayerCharacter::JumpEnd_Server_Implementation()
 {
 	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("JumpEnd() has been called in Server.")));
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// 글라이딩 중이라면, 글라이더 장착 해제
@@ -2748,7 +2769,7 @@ void AGPlayerCharacter::RunEnd_Server_Implementation()
 
 void AGPlayerCharacter::CrouchChange_Owner()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	if (AnimInstance->IsFalling())
 		return;
@@ -2765,7 +2786,7 @@ void AGPlayerCharacter::CrouchChange_Owner()
 
 void AGPlayerCharacter::CrouchChange_Server_Implementation()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	if (AnimInstance->IsFalling())
 		return;
@@ -2782,13 +2803,13 @@ void AGPlayerCharacter::CrouchChange_Server_Implementation()
 
 void AGPlayerCharacter::Dash_Owner()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	
 	
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> DashAnimMontage = CurrentLinkedAnimInstance->GetDashAnimMontage();
+	UAnimMontage* DashAnimMontage = CurrentLinkedAnimInstance->GetDashAnimMontage();
 
 	bIsDashing = true;
 
@@ -2832,12 +2853,12 @@ void AGPlayerCharacter::Dash_NetMulticast_Implementation()
 	if(IsLocallyControlled() == true)
 		return;
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 	
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> DashAnimMontage = CurrentLinkedAnimInstance->GetDashAnimMontage();
+	UAnimMontage* DashAnimMontage = CurrentLinkedAnimInstance->GetDashAnimMontage();
 
 	AnimInstance->PlayAnimMontage(DashAnimMontage);
 }
@@ -2904,7 +2925,7 @@ void AGPlayerCharacter::OnRep_WeaponInstance()
 			GetMesh()->LinkAnimClassLayers(WeaponCharacterAnimLayer);
 		}
 
-		TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+		UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 		if (IsValid(AnimInstance) == true)
 		{
 			if (WeaponInstance->GetWeaponNumber() == static_cast<int32>(EWeaponType::GreatSword))
@@ -2925,7 +2946,7 @@ void AGPlayerCharacter::OnRep_WeaponInstance()
 			GetMesh()->LinkAnimClassLayers(UnarmedCharacterAnimLayer);
 		}
 
-		TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+		UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 		if (IsValid(AnimInstance) == true)
 		{
 			AnimInstance->SetWeaponType(EWeaponType::None);
@@ -2969,7 +2990,7 @@ void AGPlayerCharacter::SpawnWeaponInstance_Server_Implementation(const int32& I
 		GetMesh()->LinkAnimClassLayers(WeaponCharacterAnimLayer);
 	}
 
-	if (TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance()))
+	if (UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		if (InWeaponNumber == 1)
 		{
@@ -3009,10 +3030,10 @@ void AGPlayerCharacter::SpawnWeaponInstance_NetMulticast_Implementation(const in
 	
 	// 후 애니메이션 재생
 	// WeaponInstance보단 WeaponClass DefaultObject 활용
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	if (IsValid((AnimInstance)) == true && IsValid((WeaponClass)) == true)
 	{
-		if (TObjectPtr<AGWeaponActor> DefaultWeapon = WeaponClass->GetDefaultObject<AGWeaponActor>())
+		if (AGWeaponActor* DefaultWeapon = WeaponClass->GetDefaultObject<AGWeaponActor>())
 		{
 			//AnimInstance->PlayAnimMontage(DefaultWeapon->GetEquipAnimMontage());
 		}
@@ -3027,7 +3048,7 @@ void AGPlayerCharacter::DestroyWeaponInstance_Server_Implementation()
 		GetMesh()->LinkAnimClassLayers(UnarmedCharacterAnimLayer);
 	}
 	
-	if (TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance()))
+	if (UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->SetWeaponType(EWeaponType::None);
 	}
@@ -3052,21 +3073,21 @@ void AGPlayerCharacter::DestroyWeaponInstance_NetMulticast_Implementation()
 		GetMesh()->LinkAnimClassLayers(UnarmedCharacterAnimLayer);
 	}
 	
-	if (TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance()))
+	if (UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->SetWeaponType(EWeaponType::None);
 	}
 	
 	// 후 애니메이션 재생
 	// WeaponInstance는 이미 Destroy되었기에 WeaponClass DefaultObject 활용
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	if (IsValid((AnimInstance)) == true && IsValid((WeaponClass)) == true)
 	{
 		// 글라이딩으로 인해 무기 해제될 때는 몽타주 재생 X
 		if (bIsGliding == true)
 			return;
 
-		if (TObjectPtr<AGWeaponActor> DefaultWeapon = WeaponClass->GetDefaultObject<AGWeaponActor>())
+		if (AGWeaponActor* DefaultWeapon = WeaponClass->GetDefaultObject<AGWeaponActor>())
 		{
 			//AnimInstance->PlayAnimMontage(DefaultWeapon->GetUnequipAnimMontage());
 		}
@@ -3127,12 +3148,12 @@ void AGPlayerCharacter::BeginBasicAttackCombo()
 	// 	UpdateRotation_Server(InputRotation);
 	// }
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
+	UAnimMontage* BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
 
 	AnimInstance->PlayAnimMontage(BasicAttackAnimMontage);
 
@@ -3153,12 +3174,12 @@ void AGPlayerCharacter::BeginBasicAttackCombo_Server_Implementation()
 {
 	bIsBasicAttacking = true;
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
+	UAnimMontage* BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
 
 	AnimInstance->PlayAnimMontage(BasicAttackAnimMontage);
 	
@@ -3170,12 +3191,12 @@ void AGPlayerCharacter::BeginBasicAttackCombo_NetMulticast_Implementation()
 	if(HasAuthority() == true || IsLocallyControlled() == true)
 		return;
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
+	UAnimMontage* BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
 
 	AnimInstance->PlayAnimMontage(BasicAttackAnimMontage);
 }
@@ -3185,9 +3206,9 @@ void AGPlayerCharacter::EndBasicAttackCombo(UAnimMontage* InMontage, bool bInter
 	//UKismetSystemLibrary::PrintString(this, TEXT("EndBasicAttackCombo is called"));
 	
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
+	UAnimMontage* BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
 	
-	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AnimInstance->Montage_IsPlaying(BasicAttackAnimMontage))
 	{
 		AnimInstance->Montage_Stop(0.2f);
@@ -3212,9 +3233,9 @@ void AGPlayerCharacter::EndBasicAttackCombo_Server_Implementation()
 	bIsBasicAttacking = false;
 
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
+	UAnimMontage* BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
 	
-	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AnimInstance->Montage_IsPlaying(BasicAttackAnimMontage))
 	{
 		AnimInstance->Montage_Stop(0.2f);
@@ -3229,9 +3250,9 @@ void AGPlayerCharacter::EndBasicAttackCombo_NetMulticast_Implementation()
 		return;
 	
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
+	UAnimMontage* BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
 	
-	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AnimInstance->Montage_IsPlaying(BasicAttackAnimMontage))
 	{
 		AnimInstance->Montage_Stop(0.2f);
@@ -3240,13 +3261,13 @@ void AGPlayerCharacter::EndBasicAttackCombo_NetMulticast_Implementation()
 
 void AGPlayerCharacter::ChargedAttack_Owner()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	if(AnimInstance->GetWeaponType() == EWeaponType::Bow)
 	{
 		AGPlayerController* PlayerController = GetController<AGPlayerController>();
-		if (::IsValid(PlayerController) == true)
+		if (IsValid(PlayerController) == true)
 		{
 			PlayerController->ToggleCrossHair(true);
 		}
@@ -3274,7 +3295,7 @@ void AGPlayerCharacter::ChargedAttack_Owner()
 		
 		// LinkedAnimInstance의 AnimMontage 가져오기
 		UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-		TObjectPtr<UAnimMontage> ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
+		UAnimMontage* ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
 		ensureMsgf(IsValid(ChargedAttackAnimMontage), TEXT("Invalid ChargedAttackAnimMontage"));
 
 		AnimInstance->PlayAnimMontage(ChargedAttackAnimMontage);
@@ -3303,12 +3324,12 @@ void AGPlayerCharacter::ChargedAttack_Server_Implementation(const bool InIsAimin
 		bIsShooting = false;
 		bIsAiming = false;
 		
-		TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+		UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 		ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 		// LinkedAnimInstance의 AnimMontage 가져오기
 		UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-		TObjectPtr<UAnimMontage> ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
+		UAnimMontage* ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
 		ensureMsgf(IsValid(ChargedAttackAnimMontage), TEXT("Invalid ChargedAttackAnimMontage"));
 
 		AnimInstance->PlayAnimMontage(ChargedAttackAnimMontage);
@@ -3332,12 +3353,12 @@ void AGPlayerCharacter::ChargedAttack_NetMulticast_Implementation(const bool InI
 		bIsShooting = false;
 		bIsAiming = false;
 		
-		TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+		UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 		ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 		// LinkedAnimInstance의 AnimMontage 가져오기
 		UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-		TObjectPtr<UAnimMontage> ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
+		UAnimMontage* ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
 		ensureMsgf(IsValid(ChargedAttackAnimMontage), TEXT("Invalid ChargedAttackAnimMontage"));
 
 		AnimInstance->PlayAnimMontage(ChargedAttackAnimMontage);
@@ -3347,9 +3368,9 @@ void AGPlayerCharacter::ChargedAttack_NetMulticast_Implementation(const bool InI
 void AGPlayerCharacter::EndChargedAttack_Owner(UAnimMontage* Montage, bool bInterrupted)
 {
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
+	UAnimMontage* ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
 	
-	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AnimInstance->Montage_IsPlaying(ChargedAttackAnimMontage))
 	{
 		AnimInstance->Montage_Stop(0.2f);
@@ -3370,9 +3391,9 @@ void AGPlayerCharacter::EndChargedAttack_Server_Implementation()
 	bIsChargedAttacking = false;
 	
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
+	UAnimMontage* ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
 	
-	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AnimInstance->Montage_IsPlaying(ChargedAttackAnimMontage))
 	{
 		AnimInstance->Montage_Stop(0.2f);
@@ -3387,9 +3408,9 @@ void AGPlayerCharacter::EndChargedAttack_NetMulticast_Implementation()
 		return;
 	
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
+	UAnimMontage* ChargedAttackAnimMontage = CurrentLinkedAnimInstance->GetChargedAttackAnimMontage();
 	
-	TObjectPtr<UAnimInstance> AnimInstance = GetMesh()->GetAnimInstance();
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AnimInstance->Montage_IsPlaying(ChargedAttackAnimMontage))
 	{
 		AnimInstance->Montage_Stop(0.2f);
@@ -3415,7 +3436,7 @@ void AGPlayerCharacter::EndBowChargedAttack_Owner()
 		ExpectedSpringArmLength = BowBasicTargetArmLength;
 
 		AGPlayerController* PlayerController = GetController<AGPlayerController>();
-		if (::IsValid(PlayerController) == true)
+		if (IsValid(PlayerController) == true)
 		{
 			PlayerController->ToggleCrossHair(false);
 		}
@@ -3466,12 +3487,12 @@ void AGPlayerCharacter::EndBowChargedAttack_NetMulticast_Implementation()
 
 void AGPlayerCharacter::AirAttack_Owner()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> AirAttackAnimMontage = CurrentLinkedAnimInstance->GetAirAttackAnimMontage();
+	UAnimMontage* AirAttackAnimMontage = CurrentLinkedAnimInstance->GetAirAttackAnimMontage();
 	ensureMsgf(IsValid(AirAttackAnimMontage), TEXT("Invalid AirAttackAnimMontage"));
 		
 	AnimInstance->PlayAnimMontage(AirAttackAnimMontage);
@@ -3500,12 +3521,12 @@ void AGPlayerCharacter::AirAttack_NetMulticast_Implementation()
 	if(HasAuthority() == true || IsLocallyControlled() == true)
 		return;
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> AirAttackAnimMontage = CurrentLinkedAnimInstance->GetAirAttackAnimMontage();
+	UAnimMontage* AirAttackAnimMontage = CurrentLinkedAnimInstance->GetAirAttackAnimMontage();
 	ensureMsgf(IsValid(AirAttackAnimMontage), TEXT("Invalid AirAttackAnimMontage"));
 
 	AnimInstance->PlayAnimMontage(AirAttackAnimMontage);
@@ -3513,12 +3534,12 @@ void AGPlayerCharacter::AirAttack_NetMulticast_Implementation()
 
 void AGPlayerCharacter::LastSectionAirAttack_Owner()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> AirAttackAnimMontage = CurrentLinkedAnimInstance->GetAirAttackAnimMontage();
+	UAnimMontage* AirAttackAnimMontage = CurrentLinkedAnimInstance->GetAirAttackAnimMontage();
 	ensureMsgf(IsValid(AirAttackAnimMontage), TEXT("Invalid AirAttackAnimMontage"));
 
 	if (AnimInstance->Montage_IsPlaying(AirAttackAnimMontage))// 마지막 섹션으로 전환하는 경우
@@ -3542,12 +3563,12 @@ void AGPlayerCharacter::LastSectionAirAttack_NetMulticast_Implementation()
 	if(HasAuthority() == true || IsLocallyControlled() == true)
 		return;
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> AirAttackAnimMontage = CurrentLinkedAnimInstance->GetAirAttackAnimMontage();
+	UAnimMontage* AirAttackAnimMontage = CurrentLinkedAnimInstance->GetAirAttackAnimMontage();
 	ensureMsgf(IsValid(AirAttackAnimMontage), TEXT("Invalid AirAttackAnimMontage"));
 
 	if (AnimInstance->Montage_IsPlaying(AirAttackAnimMontage))
@@ -3585,12 +3606,12 @@ void AGPlayerCharacter::EndAirAttack_NetMulticast_Implementation()
 
 void AGPlayerCharacter::RunAttack_Owner()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> RunAttackAnimMontage = CurrentLinkedAnimInstance->GetRunAttackAnimMontage();
+	UAnimMontage* RunAttackAnimMontage = CurrentLinkedAnimInstance->GetRunAttackAnimMontage();
 	ensureMsgf(IsValid(RunAttackAnimMontage), TEXT("Invalid RunAttackAnimMontage"));
 		
 	AnimInstance->PlayAnimMontage(RunAttackAnimMontage);
@@ -3608,12 +3629,12 @@ void AGPlayerCharacter::RunAttack_Server_Implementation()
 {
 	bIsRunAttacking = true;
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> RunAttackAnimMontage = CurrentLinkedAnimInstance->GetRunAttackAnimMontage();
+	UAnimMontage* RunAttackAnimMontage = CurrentLinkedAnimInstance->GetRunAttackAnimMontage();
 	ensureMsgf(IsValid(RunAttackAnimMontage), TEXT("Invalid RunAttackAnimMontage"));
 	
 	AnimInstance->PlayAnimMontage(RunAttackAnimMontage);
@@ -3626,12 +3647,12 @@ void AGPlayerCharacter::RunAttack_NetMulticast_Implementation()
 	if(HasAuthority() == true || IsLocallyControlled() == true)
 		return;
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> RunAttackAnimMontage = CurrentLinkedAnimInstance->GetRunAttackAnimMontage();
+	UAnimMontage* RunAttackAnimMontage = CurrentLinkedAnimInstance->GetRunAttackAnimMontage();
 	ensureMsgf(IsValid(RunAttackAnimMontage), TEXT("Invalid RunAttackAnimMontage"));
 		
 	AnimInstance->PlayAnimMontage(RunAttackAnimMontage);
@@ -3666,12 +3687,12 @@ void AGPlayerCharacter::CrouchAttack_Owner()
 	CrouchChange_Owner();
 
 	// 찌르는 몽타주 재생
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> CrouchAttackAnimMontage = CurrentLinkedAnimInstance->GetCrouchAttackAnimMontage();
+	UAnimMontage* CrouchAttackAnimMontage = CurrentLinkedAnimInstance->GetCrouchAttackAnimMontage();
 	ensureMsgf(IsValid(CrouchAttackAnimMontage), TEXT("Invalid CrouchAttackAnimMontage"));
 		
 	AnimInstance->PlayAnimMontage(CrouchAttackAnimMontage);
@@ -3691,12 +3712,12 @@ void AGPlayerCharacter::CrouchAttack_Server_Implementation()
 
 	bIsCrouchAttacking = true;
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> CrouchAttackAnimMontage = CurrentLinkedAnimInstance->GetCrouchAttackAnimMontage();
+	UAnimMontage* CrouchAttackAnimMontage = CurrentLinkedAnimInstance->GetCrouchAttackAnimMontage();
 	ensureMsgf(IsValid(CrouchAttackAnimMontage), TEXT("Invalid CrouchAttackAnimMontage"));
 		
 	AnimInstance->PlayAnimMontage(CrouchAttackAnimMontage);
@@ -3709,12 +3730,12 @@ void AGPlayerCharacter::CrouchAttack_NetMulticast_Implementation()
 	if(HasAuthority() == true || IsLocallyControlled() == true)
 		return;
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> CrouchAttackAnimMontage = CurrentLinkedAnimInstance->GetCrouchAttackAnimMontage();
+	UAnimMontage* CrouchAttackAnimMontage = CurrentLinkedAnimInstance->GetCrouchAttackAnimMontage();
 	ensureMsgf(IsValid(CrouchAttackAnimMontage), TEXT("Invalid CrouchAttackAnimMontage"));
 		
 	AnimInstance->PlayAnimMontage(CrouchAttackAnimMontage);
@@ -3746,12 +3767,12 @@ void AGPlayerCharacter::EndCrouchAttack_NetMulticast_Implementation()
 
 void AGPlayerCharacter::SkillFirst_Owner()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> SkillFirstAnimMontage = CurrentLinkedAnimInstance->GetSkillFirstAnimMontage();
+	UAnimMontage* SkillFirstAnimMontage = CurrentLinkedAnimInstance->GetSkillFirstAnimMontage();
 	ensureMsgf(IsValid(SkillFirstAnimMontage), TEXT("Invalid SkillFirstAnimMontage"));
 		
 	AnimInstance->PlayAnimMontage(SkillFirstAnimMontage);
@@ -3769,12 +3790,12 @@ void AGPlayerCharacter::SkillFirst_Server_Implementation()
 {
 	bIsSkillFirstAttacking = true;
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> SkillFirstAnimMontage = CurrentLinkedAnimInstance->GetSkillFirstAnimMontage();
+	UAnimMontage* SkillFirstAnimMontage = CurrentLinkedAnimInstance->GetSkillFirstAnimMontage();
 	ensureMsgf(IsValid(SkillFirstAnimMontage), TEXT("Invalid SkillFirstAnimMontage"));
 		
 	AnimInstance->PlayAnimMontage(SkillFirstAnimMontage);
@@ -3787,12 +3808,12 @@ void AGPlayerCharacter::SkillFirst_NetMulticast_Implementation()
 	if(HasAuthority() == true || IsLocallyControlled() == true)
 		return;
 
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> SkillFirstAnimMontage = CurrentLinkedAnimInstance->GetSkillFirstAnimMontage();
+	UAnimMontage* SkillFirstAnimMontage = CurrentLinkedAnimInstance->GetSkillFirstAnimMontage();
 	ensureMsgf(IsValid(SkillFirstAnimMontage), TEXT("Invalid SkillFirstAnimMontage"));
 		
 	AnimInstance->PlayAnimMontage(SkillFirstAnimMontage);
@@ -3824,12 +3845,12 @@ void AGPlayerCharacter::EndSkillFirstAttack_NetMulticast_Implementation()
 
 void AGPlayerCharacter::SkillSecond_Owner()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> SkillSecondAnimMontage = CurrentLinkedAnimInstance->GetSkillSecondAnimMontage();
+	UAnimMontage* SkillSecondAnimMontage = CurrentLinkedAnimInstance->GetSkillSecondAnimMontage();
 	ensureMsgf(IsValid(SkillSecondAnimMontage), TEXT("Invalid SkillSecondAnimMontage"));
 
 	GetStatComponent()->SetInvincible(true);
@@ -3849,12 +3870,12 @@ void AGPlayerCharacter::SkillSecond_Owner()
 
 void AGPlayerCharacter::SkillSecond_Server_Implementation()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> SkillSecondAnimMontage = CurrentLinkedAnimInstance->GetSkillSecondAnimMontage();
+	UAnimMontage* SkillSecondAnimMontage = CurrentLinkedAnimInstance->GetSkillSecondAnimMontage();
 	ensureMsgf(IsValid(SkillSecondAnimMontage), TEXT("Invalid SkillSecondAnimMontage"));
 
 	GetStatComponent()->SetInvincible(true);
@@ -3870,13 +3891,13 @@ void AGPlayerCharacter::SkillSecond_NetMulticast_Implementation()
 {
 	if(HasAuthority() == true || IsLocallyControlled() == true)
 		return;
-	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> SkillSecondAnimMontage = CurrentLinkedAnimInstance->GetSkillSecondAnimMontage();
+	UAnimMontage* SkillSecondAnimMontage = CurrentLinkedAnimInstance->GetSkillSecondAnimMontage();
 	ensureMsgf(IsValid(SkillSecondAnimMontage), TEXT("Invalid SkillSecondAnimMontage"));
 		
 	AnimInstance->PlayAnimMontage(SkillSecondAnimMontage);
@@ -3914,12 +3935,12 @@ void AGPlayerCharacter::EndSkillSecondAttack_NetMulticast_Implementation()
 
 void AGPlayerCharacter::StunHitReact_NetMulticast_Implementation()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
-	TObjectPtr<UGAnimInstance> CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> StunHitReactAnimMontage = CurrentLinkedAnimInstance->GetStunHitReactAnimMontage();
+	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
+	UAnimMontage* StunHitReactAnimMontage = CurrentLinkedAnimInstance->GetStunHitReactAnimMontage();
 	ensureMsgf(IsValid(StunHitReactAnimMontage), TEXT("Invalid StunHitReactAnimMontage"));
 	
 	bIsStunning = true;
@@ -3966,12 +3987,12 @@ void AGPlayerCharacter::KnockDownHitReact_NetMulticast_Implementation()
 {
 	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("KnockDownHitReact_NetMulticast is called")));
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
-	TObjectPtr<UGAnimInstance> CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> KnockDownHitReactAnimMontage = CurrentLinkedAnimInstance->GetKnockDownHitReactAnimMontage();
+	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
+	UAnimMontage* KnockDownHitReactAnimMontage = CurrentLinkedAnimInstance->GetKnockDownHitReactAnimMontage();
 	ensureMsgf(IsValid(KnockDownHitReactAnimMontage), TEXT("Invalid KnockDownHitReactAnimMontage"));
 
 	// 혹시나 Stun 몽타주 재생중이면, 정지하고 실행하도록
@@ -4011,12 +4032,12 @@ void AGPlayerCharacter::EndKnockDownHitReact_Common(UAnimMontage* Montage, bool 
 
 void AGPlayerCharacter::AirBoundHitReact_NetMulticast_Implementation()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
-	TObjectPtr<UGAnimInstance> CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> AirBoundHitReactAnimMontage = CurrentLinkedAnimInstance->GetAirBoundHitReactAnimMontage();
+	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
+	UAnimMontage* AirBoundHitReactAnimMontage = CurrentLinkedAnimInstance->GetAirBoundHitReactAnimMontage();
 	ensureMsgf(IsValid(AirBoundHitReactAnimMontage), TEXT("Invalid AirBoundHitReactAnimMontage"));
 	
 	bIsAirBounding = true;
@@ -4043,12 +4064,12 @@ void AGPlayerCharacter::EndAirBoundHitReact_Common(UAnimMontage* Montage, bool b
 
 void AGPlayerCharacter::GroundBoundHitReact_NetMulticast_Implementation()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
-	TObjectPtr<UGAnimInstance> CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> GroundBoundHitReactAnimMontage = CurrentLinkedAnimInstance->GetGroundBoundHitReactAnimMontage();
+	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
+	UAnimMontage* GroundBoundHitReactAnimMontage = CurrentLinkedAnimInstance->GetGroundBoundHitReactAnimMontage();
 	ensureMsgf(IsValid(GroundBoundHitReactAnimMontage), TEXT("Invalid GroundBoundHitReactAnimMontage"));
 	
 	bIsGroundBounding = true;
@@ -4083,7 +4104,7 @@ void AGPlayerCharacter::ForDebug_IncreaseHP_Server_Implementation()
 
 void AGPlayerCharacter::StopAllMontage_NetMulticast_Implementation()
 {
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	if(IsValid(AnimInstance))
 	{
 		AnimInstance->StopAllMontages(0.f);
@@ -4094,12 +4115,12 @@ void AGPlayerCharacter::OnCheckAttackInput_Server_Implementation(const uint8& In
 {
 	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("OnCheckAttackInput_Server is called")));
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
+	UAnimMontage* BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
 	ensureMsgf(IsValid(BasicAttackAnimMontage), TEXT("Invalid BasicAttackAnimMontage"));
 	
 	if (InbIsAttackKeyPressed == static_cast<uint8>(true))
@@ -4120,12 +4141,12 @@ void AGPlayerCharacter::OnCheckAttackInput_NetMulticast_Implementation(const uin
 	if(HasAuthority() == true|| IsLocallyControlled() == true)
 		return;
 	
-	TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+	UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	// LinkedAnimInstance의 AnimMontage 가져오기
 	UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-	TObjectPtr<UAnimMontage> BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
+	UAnimMontage* BasicAttackAnimMontage = CurrentLinkedAnimInstance->GetBasicAttackAnimMontage();
 	ensureMsgf(IsValid(BasicAttackAnimMontage), TEXT("Invalid BasicAttackAnimMontage"));
 	
 	if (InbIsAttackKeyPressed == static_cast<uint8>(true))
@@ -4250,12 +4271,12 @@ void AGPlayerCharacter::SpawnGliderInstance_NetMulticast_Implementation(const bo
 	
 	if(bIsFirst == true)
 	{
-		TObjectPtr<UGAnimInstance> AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
+		UGAnimInstance* AnimInstance = Cast<UGAnimInstance>(GetMesh()->GetAnimInstance());
 		ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 		
 		// LinkedAnimInstance의 AnimMontage 가져오기
 		UGAnimInstance* CurrentLinkedAnimInstance = GetLinkedAnimInstance();
-		TObjectPtr<UAnimMontage> GlidingStartAnimMontage = CurrentLinkedAnimInstance->GetGlidingStartAnimMontage();
+		UAnimMontage* GlidingStartAnimMontage = CurrentLinkedAnimInstance->GetGlidingStartAnimMontage();
 		ensureMsgf(IsValid(GlidingStartAnimMontage), TEXT("Invalid GlidingStartAnimMontage"));
 		
 		AnimInstance->PlayAnimMontage(GlidingStartAnimMontage);

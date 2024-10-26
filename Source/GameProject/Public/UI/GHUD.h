@@ -26,7 +26,7 @@ public:
 
 	void BindPlayerState(AGPlayerState* InPlayerState);
 
-	TObjectPtr<UVerticalBox> GetTopVerticalBox() { return TopVerticalBox; }
+	UVerticalBox* GetTopVerticalBox() { return TopVerticalBox; }
 	
 	// UFUNCTION()
 	// void ShowBossHPBar();

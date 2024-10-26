@@ -192,10 +192,10 @@ void AGMage01::OnCheckHit()
 	{
 		for (const FHitResult& HitResult : HitResults)	
 		{
-			if (::IsValid(HitResult.GetActor()))
+			if (IsValid(HitResult.GetActor()))
 			{
-				TObjectPtr<AGPlayerCharacter> Player = Cast<AGPlayerCharacter>(HitResult.GetActor());
-				if(::IsValid(Player))
+				AGPlayerCharacter* Player = Cast<AGPlayerCharacter>(HitResult.GetActor());
+				if(IsValid(Player))
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -227,10 +227,10 @@ void AGMage01::OnCheckHit()
 	{
 		for (const FHitResult& CharacterMeshHitResult : CharacterMeshHitResults)
 		{
-			if (::IsValid(CharacterMeshHitResult.GetActor()))
+			if (IsValid(CharacterMeshHitResult.GetActor()))
 			{
-				TObjectPtr<AGPlayerCharacter> Player = Cast<AGPlayerCharacter>(CharacterMeshHitResult.GetActor());
-				if(::IsValid(Player))
+				AGPlayerCharacter* Player = Cast<AGPlayerCharacter>(CharacterMeshHitResult.GetActor());
+				if(IsValid(Player))
 				{
 					if(Player->GetStatComponent()->GetCurrentHP() > KINDA_SMALL_NUMBER)
 					{
@@ -268,7 +268,7 @@ void AGMage01::PlayBasicAttackAnimMontage_NetMulticast_Implementation()
 	ensureMsgf(IsValid(AnimInstance), TEXT("Invalid AnimInstance"));
 
 	int AttackRandNum = FMath::RandRange(01, 03);
-	TObjectPtr<class UAnimMontage> AttackRandMontage = nullptr;
+	UAnimMontage* AttackRandMontage = nullptr;
 	
 	switch (AttackRandNum)
 	{

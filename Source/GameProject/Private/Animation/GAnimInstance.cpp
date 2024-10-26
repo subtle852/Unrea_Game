@@ -287,81 +287,81 @@ void UGAnimInstance::PlayAnimMontage(UAnimMontage* InAnimMontage)
 	}
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetJumpFlipAnimMontage() const
+UAnimMontage* UGAnimInstance::GetJumpFlipAnimMontage() const
 {
 	//const EMovementDirection MainMovementDirection = MainAnimInstance->MovementDirection;
 
 	return JumpFlipMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetGlidingStartAnimMontage() const
+UAnimMontage* UGAnimInstance::GetGlidingStartAnimMontage() const
 {
 	return GlidingStartAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetDashAnimMontage() const
+UAnimMontage* UGAnimInstance::GetDashAnimMontage() const
 {
 	return DashFwdAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetBasicAttackAnimMontage() const
+UAnimMontage* UGAnimInstance::GetBasicAttackAnimMontage() const
 {
 	//const EMovementDirection MainMovementDirection = MainAnimInstance->MovementDirection;
 
 	return BasicAttackAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetChargedAttackAnimMontage() const
+UAnimMontage* UGAnimInstance::GetChargedAttackAnimMontage() const
 {
 	return ChargedAttackAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetAirAttackAnimMontage() const
+UAnimMontage* UGAnimInstance::GetAirAttackAnimMontage() const
 {
 	return AirAttackAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetRunAttackAnimMontage() const
+UAnimMontage* UGAnimInstance::GetRunAttackAnimMontage() const
 {
 	return RunAttackAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetCrouchAttackAnimMontage() const
+UAnimMontage* UGAnimInstance::GetCrouchAttackAnimMontage() const
 {
 	return CrouchAttackAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetSkillFirstAnimMontage() const
+UAnimMontage* UGAnimInstance::GetSkillFirstAnimMontage() const
 {
 	return SkillFirstAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetSkillSecondAnimMontage() const
+UAnimMontage* UGAnimInstance::GetSkillSecondAnimMontage() const
 {
 	return SkillSecondAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetStunHitReactAnimMontage() const
+UAnimMontage* UGAnimInstance::GetStunHitReactAnimMontage() const
 {
 	return StunHitReactAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetKnockDownHitReactAnimMontage() const
+UAnimMontage* UGAnimInstance::GetKnockDownHitReactAnimMontage() const
 {
 	return KnockDownHitReactAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetAirBoundHitReactAnimMontage() const
+UAnimMontage* UGAnimInstance::GetAirBoundHitReactAnimMontage() const
 {
 	return AirBoundHitReactAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetGroundBoundHitReactAnimMontage() const
+UAnimMontage* UGAnimInstance::GetGroundBoundHitReactAnimMontage() const
 {
 	return GroundBoundHitReactAnimMontage;
 }
 
-TObjectPtr<UAnimMontage> UGAnimInstance::GetLyingHitReactAnimMontage() const
+UAnimMontage* UGAnimInstance::GetLyingHitReactAnimMontage() const
 {
 	return LyingHitReactAnimMontage;
 }
