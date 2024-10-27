@@ -3271,10 +3271,6 @@ void AGPlayerCharacter::ChargedAttack_Owner()
 		{
 			PlayerController->ToggleCrossHair(true);
 		}
-		
-		FRotator temp = FRotator(GetActorRotation().Pitch, GetControlRotation().Yaw, GetActorRotation().Roll);
-		SetActorRotation(temp);
-		UpdateRotation_Server(temp);
 
 		FRotator NewControlRotation = GetController()->GetControlRotation();
 		UpdateControlRotation_Server(NewControlRotation);
@@ -3318,6 +3314,8 @@ void AGPlayerCharacter::ChargedAttack_Server_Implementation(const bool InIsAimin
 	{
 		bIsShooting = false;
 		bIsAiming = true;
+		bUseControllerRotationYaw = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
 	else
 	{
@@ -3347,6 +3345,8 @@ void AGPlayerCharacter::ChargedAttack_NetMulticast_Implementation(const bool InI
 	{
 		bIsShooting = false;
 		bIsAiming = true;
+		bUseControllerRotationYaw = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
 	else
 	{
